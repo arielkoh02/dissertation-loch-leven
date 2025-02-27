@@ -91,7 +91,7 @@ plot_SDChlA<-ggplot(RB5_monthly_average, aes(x = RB5.SD, y = RB5.ChlA)) +
 
 plot_SDChlA
 
-ggsave("output/monitoringdatarelationship/SDChlA.png",plot_tempChlA,width=16,height=8,dpi=450)
+ggsave("output/monitoringdatarelationship/SDChlA.png",plot_SDChlA,width=16,height=8,dpi=450)
 
 #plot SRSi vs ChlA
 plot_SRSiChlA<-ggplot(RB5_monthly_average, aes(x = RB5.SRSi, y = RB5.ChlA)) +
