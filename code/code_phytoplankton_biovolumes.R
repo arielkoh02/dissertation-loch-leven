@@ -55,8 +55,7 @@ View(biovol_data2)
 biovol_fulldata <- full_join(
   select(biovol_data1, YearMonth, year, month, Cryto.Biovolume, Cyano.Biovolume),  
   select(biovol_data2, YearMonth, Diatoms.Biovolume, Greens.Biovolume),  
-  by = "YearMonth"
-)
+  by = "YearMonth")
 View(biovol_fulldata)
 
 #convert to long form 
@@ -77,6 +76,34 @@ plot_biovol<-ggplot(biovol_long, aes(x = YearMonth, y = Biovolume, color = Phyto
        color = "Phytoplankton Group") +
   theme_classic() +  # Clean theme
   theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotate x-axis labels
+
 plot_biovol
 
 ggsave("output/timeseries/phyto.png",plot_biovol,width=16,height=8,dpi=450)
+
+#data with summed 
+biovol_sumdata<- biovol_fulldata %>% 
+  mutate(Total.Biovolume = rowSums(select(., ends_with("Biovolume")), na.rm = TRUE))
+
+RB5_monthly_average<-read.csv("data/raw/csv/RB5_monitoring_data_monthly_average_1980-2023.csv")
+
+biovol_chla <- full_join(
+  select(biovol_sumdata, YearMonth, year, month, Total.Biovolume),  
+  select(RB5_monthly_average, YearMonth, RB5.ChlA),  
+  by = "YearMonth")
+
+View(biovol_chla)
+
+plot_biovolchla<-ggplot(biovol_chla, aes(x = Total.Biovolume, y = RB5.ChlA)) +
+  geom_line(colour="lightblue",linewidth = 0.5) +  # Line plot
+  geom_point(colour="grey",size = 1) +  # Add points
+  geom_smooth(linetype="dashed",se=F,colour="black")+
+  labs(title = "Total Biovolume of Phytoplankton vs Chlorophyll A",
+       x = "Total Bio (Average)",
+       y = "ChlA (Average)") +
+  theme_classic()  # Clean theme
+
+plot_biovolchla
+
+ggsave("output/chlaproxy/biovolvschla.png",plot_biovolchla,width=16,height=8,dpi=450)
+

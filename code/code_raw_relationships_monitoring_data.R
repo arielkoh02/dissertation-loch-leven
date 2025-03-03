@@ -34,6 +34,9 @@ RB5_monthly_average<- RB5_only %>%
   ungroup()%>%
   mutate(YearMonth = as.Date(paste(year, month, "01", sep = "-")))  # Create a proper date format
 
+#export csv
+write_csv(RB5_monthly_average, "data/raw/csv/RB5_monitoring_data_monthly_average_1980-2023.csv")
+
 #checking data 
 View(RB5_monthly_average)
 
