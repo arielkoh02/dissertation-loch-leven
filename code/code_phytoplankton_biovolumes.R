@@ -78,3 +78,5 @@ plot_biovol<-ggplot(biovol_long, aes(x = YearMonth, y = Biovolume, color = Phyto
   theme_classic() +  # Clean theme
   theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotate x-axis labels
 plot_biovol
+
+ggsave("output/timeseries/phyto.png",plot_biovol,width=16,height=8,dpi=450)
