@@ -4,7 +4,7 @@
 library(tidyverse)
 
 #load data
-RB5_monthly_average<-read.csv("data/raw/csv/RB5_monitoring_data_monthly_average_1980-2023.csv")
+RB5_monthly_average<-read.csv("data/csv/RB5_monitoring_data_monthly_average_1980-2023.csv")
 
 View(RB5_monthly_average)
 
@@ -34,8 +34,8 @@ RB5_seasonal_average <- RB5_seasonal_average %>%
       season == "Autumn" ~ 10   # October for Autumn
     ),
     date_for_plot = as.Date(paste(season_year, month_for_plot, "01", sep = "-")) # Create valid Date
-  )
-
+    ) #%>%
+      #filter(date_for_plot >= as.Date("2004-01-01") & date_for_plot <= as.Date("2017-01-01"))  # Correct filtering
 View(RB5_seasonal_average)
 
 # Plot seasonal ChlA over time grouped by season
@@ -53,6 +53,7 @@ plot_seasonalchla<-ggplot(RB5_seasonal_average, aes(x = date_for_plot, y = `RB5.
 plot_seasonalchla
 
 ggsave("output/seasonaltimeseries/ChlA.png",plot_seasonalchla,width=16,height=8,dpi=450)
+#ggsave("output/seasonaltimeseries2004-2016/ChlA.png",plot_seasonalchla,width=16,height=8,dpi=450)
 
 # Plot seasonal DO over time grouped by season
 plot_seasonalDO<-ggplot(RB5_seasonal_average, aes(x = date_for_plot, y = `RB5.DO`)) +
@@ -69,6 +70,7 @@ plot_seasonalDO<-ggplot(RB5_seasonal_average, aes(x = date_for_plot, y = `RB5.DO
 plot_seasonalDO
 
 ggsave("output/seasonaltimeseries/DO.png",plot_seasonalDO,width=16,height=8,dpi=450)
+#ggsave("output/seasonaltimeseries2004-2016/DO.png",plot_seasonalDO,width=16,height=8,dpi=450)
 
 # Plot seasonal DO over time grouped by season
 plot_seasonalNO3<-ggplot(RB5_seasonal_average, aes(x = date_for_plot, y = `RB5.NO3`)) +
@@ -86,6 +88,7 @@ plot_seasonalNO3<-ggplot(RB5_seasonal_average, aes(x = date_for_plot, y = `RB5.N
 plot_seasonalNO3
 
 ggsave("output/seasonaltimeseries/NO3.png",plot_seasonalNO3,width=16,height=8,dpi=450)
+#ggsave("output/seasonaltimeseries2004-2016/NO3.png",plot_seasonalNO3,width=16,height=8,dpi=450)
 
 # Plot seasonal SD over time grouped by season
 plot_seasonalSD<-ggplot(RB5_seasonal_average, aes(x = date_for_plot, y = `RB5.SD`)) +
@@ -103,6 +106,7 @@ plot_seasonalSD<-ggplot(RB5_seasonal_average, aes(x = date_for_plot, y = `RB5.SD
 plot_seasonalSD
 
 ggsave("output/seasonaltimeseries/SD.png",plot_seasonalSD,width=16,height=8,dpi=450)
+#ggsave("output/seasonaltimeseries/SD.png",plot_seasonalSD,width=16,height=8,dpi=450)
 
 # Plot seasonal SRP over time grouped by season
 plot_seasonalSRP<-ggplot(RB5_seasonal_average, aes(x = date_for_plot, y = `RB5.SRP`)) +
@@ -120,6 +124,7 @@ plot_seasonalSRP<-ggplot(RB5_seasonal_average, aes(x = date_for_plot, y = `RB5.S
 plot_seasonalSRP
 
 ggsave("output/seasonaltimeseries/SRP.png",plot_seasonalSRP,width=16,height=8,dpi=450)
+#ggsave("output/seasonaltimeseries2004-2016/SRP.png",plot_seasonalSRP,width=16,height=8,dpi=450)
 
 # Plot seasonal SRSi over time grouped by season
 plot_seasonalSRSi<-ggplot(RB5_seasonal_average, aes(x = date_for_plot, y = `RB5.SRSi`)) +
@@ -137,6 +142,7 @@ plot_seasonalSRSi<-ggplot(RB5_seasonal_average, aes(x = date_for_plot, y = `RB5.
 plot_seasonalSRSi
 
 ggsave("output/seasonaltimeseries/SRSi.png",plot_seasonalSRSi,width=16,height=8,dpi=450)
+#ggsave("output/seasonaltimeseries2004-2016/SRSi.png",plot_seasonalSRSi,width=16,height=8,dpi=450)
 
 # Plot seasonal temp over time grouped by season
 plot_seasonaltemp<-ggplot(RB5_seasonal_average, aes(x = date_for_plot, y = `RB5.Temp`)) +
@@ -154,3 +160,4 @@ plot_seasonaltemp<-ggplot(RB5_seasonal_average, aes(x = date_for_plot, y = `RB5.
 plot_seasonaltemp
 
 ggsave("output/seasonaltimeseries/temp.png",plot_seasonaltemp,width=16,height=8,dpi=450)
+#ggsave("output/seasonaltimeseries2004-2016/temp.png",plot_seasonaltemp,width=16,height=8,dpi=450)

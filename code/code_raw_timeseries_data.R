@@ -6,7 +6,7 @@ library(tidyverse)
 #install.packages("tidyverse")
 
 #loading data
-monitoring_data<-read.csv("data/raw/csv/monitoring_data_1980-2023.csv")
+monitoring_data<-read.csv("data/csv/monitoring_data_1980-2023.csv")
 
 #checking data
 View(monitoring_data)
@@ -32,7 +32,9 @@ RB5_monthly_average<- RB5_only %>%
   group_by(year, month) %>%
   summarise(across(where(is.numeric), mean, na.rm = TRUE)) %>%  # Average numeric cols
   ungroup()%>%
-  mutate(YearMonth = as.Date(paste(year, month, "01", sep = "-")))  # Create a proper date format
+  mutate(YearMonth = as.Date(paste(year, month, "01", sep = "-"))  # Create a proper date format
+  ) #%>% 
+  #filter(YearMonth>= as.Date("2004-01-01") & YearMonth <= as.Date("2016-12-01"))
 
 #checking data 
 View(RB5_monthly_average)
@@ -51,6 +53,7 @@ plot_ChlA<-ggplot(RB5_monthly_average, aes(x = YearMonth, y = RB5.ChlA)) +
 plot_ChlA
 
 ggsave("output/timeseries/chlA.png",plot_ChlA,width=16,height=8,dpi=450)
+#ggsave("output/timeseries2004-2016/chlA.png",plot_ChlA,width=16,height=8,dpi=450)
 
 #plot SRP
 plot_SRP<-ggplot(RB5_monthly_average, aes(x = YearMonth, y = RB5.SRP)) +
@@ -66,6 +69,7 @@ plot_SRP<-ggplot(RB5_monthly_average, aes(x = YearMonth, y = RB5.SRP)) +
 plot_SRP
 
 ggsave("output/timeseries/SRP.png",plot_SRP,width=16,height=8,dpi=450)
+#ggsave("output/timeseries2004-2016/SRP.png",plot_SRP,width=16,height=8,dpi=450)
 
 #plot NO3
 plot_NO3<-ggplot(RB5_monthly_average, aes(x = YearMonth, y = RB5.NO3)) +
@@ -81,6 +85,7 @@ plot_NO3<-ggplot(RB5_monthly_average, aes(x = YearMonth, y = RB5.NO3)) +
  plot_NO3
  
 ggsave("output/timeseries/NO3.png",plot_NO3,width=16,height=8,dpi=450)
+#ggsave("output/timeseries2004-2016/NO3.png",plot_NO3,width=16,height=8,dpi=450)
  
 #plot temp
 plot_temp<-ggplot(RB5_monthly_average, aes(x = YearMonth, y = RB5.Temp)) +
@@ -96,6 +101,7 @@ plot_temp<-ggplot(RB5_monthly_average, aes(x = YearMonth, y = RB5.Temp)) +
 plot_temp
 
 ggsave("output/timeseries/temp.png",plot_NO3,width=16,height=8,dpi=450)
+#ggsave("output/timeseries2004-2016/temp.png",plot_NO3,width=16,height=8,dpi=450)
 
 #plot secchi depth
 plot_SD<-ggplot(RB5_monthly_average, aes(x = YearMonth, y = RB5.SD)) +
@@ -111,6 +117,7 @@ plot_SD<-ggplot(RB5_monthly_average, aes(x = YearMonth, y = RB5.SD)) +
 plot_SD
 
 ggsave("output/timeseries/SD.png",plot_NO3,width=16,height=8,dpi=450)
+#ggsave("output/timeseries2004-2016/SD.png",plot_NO3,width=16,height=8,dpi=450)
 
 #plot soluble reactive silica
 plot_SRSi<-ggplot(RB5_monthly_average, aes(x = YearMonth, y = RB5.SRSi)) +
@@ -126,6 +133,7 @@ plot_SRSi<-ggplot(RB5_monthly_average, aes(x = YearMonth, y = RB5.SRSi)) +
 plot_SRSi
 
 ggsave("output/timeseries/SRSi.png",plot_SRSi,width=16,height=8,dpi=450)
+#ggsave("output/timeseries2004-2016/SRSi.png",plot_SRSi,width=16,height=8,dpi=450)
 
 #plot dissolved oxygen
 plot_DO<-ggplot(RB5_monthly_average, aes(x = YearMonth, y = RB5.DO)) +
@@ -141,3 +149,4 @@ plot_DO<-ggplot(RB5_monthly_average, aes(x = YearMonth, y = RB5.DO)) +
 plot_DO
 
 ggsave("output/timeseries/DO.png",plot_DO,width=16,height=8,dpi=450)
+#ggsave("output/timeseries2004-2016/DO.png",plot_DO,width=16,height=8,dpi=450)

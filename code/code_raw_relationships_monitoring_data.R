@@ -6,7 +6,7 @@ library(tidyverse)
 #install.packages("tidyverse")
 
 #loading data
-monitoring_data<-read.csv("data/raw/csv/monitoring_data_1980-2023.csv")
+monitoring_data<-read.csv("data/csv/monitoring_data_1980-2023.csv")
 
 #checking data
 View(monitoring_data)
@@ -32,10 +32,11 @@ RB5_monthly_average<- RB5_only %>%
   group_by(year, month) %>%
   summarise(across(where(is.numeric), mean, na.rm = TRUE)) %>%  # Average numeric cols
   ungroup()%>%
-  mutate(YearMonth = as.Date(paste(year, month, "01", sep = "-")))  # Create a proper date format
-
+  mutate(YearMonth = as.Date(paste(year, month, "01", sep = "-"))  # Create a proper date format
+        ) #%>% 
+         #filter(YearMonth>= as.Date("2004-01-01") & YearMonth <= as.Date("2016-12-01"))
 #export csv
-write_csv(RB5_monthly_average, "data/raw/csv/RB5_monitoring_data_monthly_average_1980-2023.csv")
+write_csv(RB5_monthly_average, "data/csv/RB5_monitoring_data_monthly_average_1980-2023.csv")
 
 #checking data 
 View(RB5_monthly_average)
@@ -53,6 +54,7 @@ plot_SRPChlA<-ggplot(RB5_monthly_average, aes(x = RB5.SRP, y = RB5.ChlA)) +
 plot_SRPChlA
 
 ggsave("output/monitoringdatarelationship/SRPChlA.png",plot_SRPChlA,width=16,height=8,dpi=450)
+#ggsave("output/monitoringdatarelationship2004-2016/SRPChlA.png",plot_SRPChlA,width=16,height=8,dpi=450)
 
 #plot NO3 vs ChlA
 plot_NO3ChlA<-ggplot(RB5_monthly_average, aes(x = RB5.NO3, y = RB5.ChlA)) +
@@ -67,6 +69,7 @@ plot_NO3ChlA<-ggplot(RB5_monthly_average, aes(x = RB5.NO3, y = RB5.ChlA)) +
 plot_NO3ChlA
 
 ggsave("output/monitoringdatarelationship/NO3ChlA.png",plot_NO3ChlA,width=16,height=8,dpi=450)
+#ggsave("output/monitoringdatarelationship2004-2016/NO3ChlA.png",plot_NO3ChlA,width=16,height=8,dpi=450)
 
 #plot temp vs ChlA
 plot_tempChlA<-ggplot(RB5_monthly_average, aes(x = RB5.Temp, y = RB5.ChlA)) +
@@ -81,6 +84,7 @@ plot_tempChlA<-ggplot(RB5_monthly_average, aes(x = RB5.Temp, y = RB5.ChlA)) +
 plot_tempChlA
 
 ggsave("output/monitoringdatarelationship/tempChlA.png",plot_tempChlA,width=16,height=8,dpi=450)
+#ggsave("output/monitoringdatarelationship2004-2016/tempChlA.png",plot_tempChlA,width=16,height=8,dpi=450)
 
 #plot secchi depth vs ChlA
 plot_SDChlA<-ggplot(RB5_monthly_average, aes(x = RB5.SD, y = RB5.ChlA)) +
@@ -95,6 +99,7 @@ plot_SDChlA<-ggplot(RB5_monthly_average, aes(x = RB5.SD, y = RB5.ChlA)) +
 plot_SDChlA
 
 ggsave("output/monitoringdatarelationship/SDChlA.png",plot_SDChlA,width=16,height=8,dpi=450)
+#ggsave("output/monitoringdatarelationship2004-2016/SDChlA.png",plot_SDChlA,width=16,height=8,dpi=450)
 
 #plot SRSi vs ChlA
 plot_SRSiChlA<-ggplot(RB5_monthly_average, aes(x = RB5.SRSi, y = RB5.ChlA)) +
@@ -109,6 +114,7 @@ plot_SRSiChlA<-ggplot(RB5_monthly_average, aes(x = RB5.SRSi, y = RB5.ChlA)) +
 plot_SRSiChlA
 
 ggsave("output/monitoringdatarelationship/SRSiChlA.png",plot_SRSiChlA,width=16,height=8,dpi=450)
+#ggsave("output/monitoringdatarelationship2004-2016/SRSiChlA.png",plot_SRSiChlA,width=16,height=8,dpi=450)
 
 #plot DO vs ChlA
 plot_DOChlA<-ggplot(RB5_monthly_average, aes(x = RB5.DO, y = RB5.ChlA)) +
@@ -123,3 +129,4 @@ plot_DOChlA<-ggplot(RB5_monthly_average, aes(x = RB5.DO, y = RB5.ChlA)) +
 plot_DOChlA
 
 ggsave("output/monitoringdatarelationship/DOChlA.png",plot_DOChlA,width=16,height=8,dpi=450)
+#ggsave("output/monitoringdatarelationship2004-2016/DOChlA.png",plot_DOChlA,width=16,height=8,dpi=450)

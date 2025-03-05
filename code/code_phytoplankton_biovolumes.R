@@ -89,6 +89,9 @@ biovol_sumdata<- biovol_fulldata %>%
 
 RB5_monthly_average<-read.csv("data/raw/csv/RB5_monitoring_data_monthly_average_1980-2023.csv")
 
+#RB5_monthly_average<-RB5_monthly_average %>% 
+#filter(YearMonth>= as.Date("2004-01-01") & YearMonth <= as.Date("2016-12-01"))
+
 biovol_chla <- full_join(
   select(biovol_sumdata, YearMonth, year, month, Total.Biovolume),  
   select(RB5_monthly_average, YearMonth, RB5.ChlA),  
@@ -108,7 +111,7 @@ plot_biovolchla<-ggplot(biovol_chla, aes(x = Total.Biovolume, y = RB5.ChlA)) +
 plot_biovolchla
 
 ggsave("output/chlaproxy/biovolvschla.png",plot_biovolchla,width=16,height=8,dpi=450)
-
+#ggsave("output/chlaproxy/biovolvschla2004-2016.png",plot_biovolchla,width=16,height=8,dpi=450)
 
 phyto_seasonal_average <- biovol_fulldata %>%
   mutate(
@@ -208,3 +211,4 @@ library(ggpubr)
 plot_seasonalbiovol<-ggarrange(plot_seasonalcryto, plot_seasonalcyano, plot_seasonaldiatoms, plot_seasonalgreens, nrow = 2, ncol = 2, common.legend = TRUE, legend="bottom")
 plot_seasonalbiovol
 ggsave("output/seasonaltimeseries/biovol.png",plot_seasonalbiovol,width=16,height=8,dpi=450)
+ggsave("output/seasonaltimeseries2004-2016/biovol.png",plot_seasonalbiovol,width=16,height=8,dpi=450)
