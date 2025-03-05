@@ -6,6 +6,7 @@ library(tidyverse)
 #load data
 waterlevelp1<-read.csv("data/raw/csv/waterlevels_1980-1992.csv")
 waterlevelp2<-read.csv("data/raw/csv/waterlevels_1993-2007.csv")
+waterlevelp3<-read.csv("data/raw/csv/waterlevels_2008-2013.csv")
 
 #changing + matching names 
 waterlevelp1<-waterlevelp1 %>% rename(waterlevel.masl=Loch.Level.m.asl) %>% 
@@ -14,11 +15,15 @@ waterlevelp1<-waterlevelp1 %>% rename(waterlevel.masl=Loch.Level.m.asl) %>%
 waterlevelp2<-waterlevelp2 %>% rename(waterlevel.masl=Harbour.masl) %>% 
   mutate(Date=dmy(Date)) %>% select(Date,waterlevel.masl)
 
+waterlevelp3<-waterlevelp3 %>% rename(Date=SAMPLE_DATE,waterlevel.masl=Level.maod) %>% 
+  mutate(Date=dmy(Date)) %>% select(Date,waterlevel.masl)
+
 #checking data
 View(waterlevelp1)
 View(waterlevelp2)
+View(waterlevelp3)
 
-fullwaterlevel<-bind_rows(waterlevelp1,waterlevelp2)  %>% 
+fullwaterlevel<-bind_rows(waterlevelp1,waterlevelp2,waterlevelp3)  %>% 
   mutate(year = year(Date),  # Extract year
   month = month(Date))
 
