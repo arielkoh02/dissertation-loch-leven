@@ -47,8 +47,8 @@ plot_ChlA<-ggplot(RB5_monthly_average, aes(x = YearMonth, y = RB5.ChlA)) +
   labs(title = "Time Series of RB5_ChlA",
        x = "Year-Month",
        y = "Average Chlorophyll A Content") +
-  scale_x_date(date_labels = "%b %Y", date_breaks = "6 months") +  # Format x-axis
-  theme_minimal()  # Clean theme
+  scale_x_date(date_labels = "%Y", date_breaks = "6 months") +  # Format x-axis
+  theme_classic()  # Clean theme
 
 plot_ChlA
 
