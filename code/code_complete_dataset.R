@@ -8,10 +8,13 @@ RB5_monitoring_data<-read.csv("data/csv/RB5_monitoring_data_monthly_average_1980
 View(RB5_monitoring_data)
 
 RB5_monitoring_data<-RB5_monitoring_data %>% filter(between(year,2004,2016)) %>% 
-  select(-RB5.Cond,-RB5.NO2,-RB5.NH4,-RB5.PP,-RB5.PSiO2,- RB5.SURP,-RB5.TSi,-RB5.TSP)
+  select(-RB5.Cond,-RB5.NO2,-RB5.NH4,-RB5.PP,-RB5.PSiO2,- RB5.SURP,-RB5.TSi,-RB5.TSP) %>% 
+  mutate(YearMonth=as.Date(YearMonth))
 
 #load biovol data
 biovol_fulldata<-read.csv("data/csv/biovolfulldata_2004-2016.csv")
+biovol_fulldata<-biovol_fulldata %>% mutate(YearMonth=as.Date(YearMonth))
+
 View(biovol_fulldata)
 
 #load predator data
@@ -53,6 +56,49 @@ fullwaterlevel<-bind_rows(waterlevelp2,waterlevelp3)  %>%
 
 View(fullwaterlevel)
 
+#start combining everything
+all_data1 <- full_join(
+  RB5_monitoring_data,  
+  select(predator_data, YearMonth, Daphnia),  
+  by = "YearMonth"
+)
+
+View(all_data1)
+
+all_data2 <- full_join(
+  biovol_fulldata,  
+  select(fullwaterlevel, YearMonth, waterlevel.masl),  
+  by = "YearMonth"
+)
+
+View(all_data2)
+
+all_data <- full_join(
+  all_data2,  
+  all_data1,  
+  by = "YearMonth"
+)
+
+View(all_data)
+
+#clean data set
+all_data<-all_data %>% select(YearMonth,year.y,month.y, Cryto.Biovolume, Cyano.Biovolume,
+                              Diatoms.Biovolume, Greens.Biovolume,
+                              waterlevel.masl,Daphnia,starts_with("RB5")) %>% 
+  rename(Year=year.y,Month=month.y) %>% 
+  mutate(
+    Season = case_when(
+      Month %in% c(12) ~ "Winter",    # December is Winter
+      Month %in% c(1, 2) ~ "Winter",  # January & February are also Winter
+      Month %in% c(3, 4, 5) ~ "Spring",
+      Month %in% c(6, 7, 8) ~ "Summer",
+      Month %in% c(9, 10, 11) ~ "Autumn"
+    ))%>%
+  mutate(Total.Biovolume=Cryto.Biovolume+ Cyano.Biovolume+
+                          Diatoms.Biovolume+ Greens.Biovolume) %>% 
+  relocate(Season, .after = Month) %>% relocate(Total.Biovolume, .after = Greens.Biovolume)
 
 
+View(all_data)
 
+write.csv(all_data,"data/csv/alldata-2004-2016.csv")
