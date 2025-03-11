@@ -60,15 +60,18 @@ biovol_fulldata <- full_join(
   by = "YearMonth")
 View(biovol_fulldata)
 
+write.csv(biovol_fulldata, "data/csv/biovolfulldata_2004-2016.csv")
+
 #convert to long form 
 biovol_long <- biovol_fulldata %>%
   pivot_longer(cols = ends_with("Biovolume"),  # Select biovolume columns
                names_to = "Phytoplankton_Group",  # Create new column for names
-               values_to = "Biovolume")  # Create new column for values
+               values_to = "Biovolume") %>%  # Create new column for values
+  mutate(Log_Biovolume=log10(Biovolume))
 View(biovol_long)
 
 #plotting data biovolume over time grouped by phytoplankton group
-plot_biovol<-ggplot(biovol_long, aes(x = YearMonth, y = Biovolume, color = Phytoplankton_Group)) +
+plot_biovol<-ggplot(biovol_long, aes(x = YearMonth, y = Log_Biovolume, color = Phytoplankton_Group)) +
   geom_line(linewidth=0.5) +  # Line plot
   geom_point(size=1) +  # Add points for better visibility
   scale_x_date(date_labels = "%Y", date_breaks = "1 year") +  # Format x-axis
@@ -81,7 +84,7 @@ plot_biovol<-ggplot(biovol_long, aes(x = YearMonth, y = Biovolume, color = Phyto
 
 plot_biovol
 
-ggsave("output/timeseries/phyto.png",plot_biovol,width=16,height=8,dpi=450)
+ggsave("output/timeseries/logbiovolphyto.png",plot_biovol,width=16,height=8,dpi=450)
 
 #data with summed 
 biovol_sumdata<- biovol_fulldata %>% 
@@ -213,10 +216,15 @@ plot_seasonalbiovol
 ggsave("output/seasonaltimeseries/biovol.png",plot_seasonalbiovol,width=16,height=8,dpi=450)
 ggsave("output/seasonaltimeseries2004-2016/biovol.png",plot_seasonalbiovol,width=16,height=8,dpi=450)
 
+
+#convert to long form with the season 
 phyto_long <- phyto_seasonal_average %>%
   select(season, Cryto.Biovolume, Cyano.Biovolume, Diatoms.Biovolume, Greens.Biovolume) %>%
   pivot_longer(cols = -season, names_to = "Phytoplankton_Group", values_to = "Biovolume")
 
+View(phyto_long)
+
+#plotting violin plot for each phytoplankton group's average per season 
 plot_violin <- ggplot(phyto_long, aes(x = season, y = Biovolume, fill = season)) +
   geom_violin() +
   facet_wrap(~Phytoplankton_Group, scales = "free_y") +  # Separate plots per group
@@ -232,7 +240,7 @@ plot_violin
 ggsave("output/seasonaltimeseries2004-2016/violinbiovol.png",plot_violin,width=16,height=8,dpi=450)
 
 
-
+#plotting violin plot for each phytoplankton group's average per season 
 plot_boxplot <- ggplot(phyto_long, aes(x = season, y = Biovolume, fill = season)) +
   geom_boxplot() +
   facet_wrap(~Phytoplankton_Group, scales = "free_y") +  # Separate plots per group
@@ -246,4 +254,5 @@ plot_boxplot <- ggplot(phyto_long, aes(x = season, y = Biovolume, fill = season)
 
 plot_boxplot
 ggsave("output/seasonaltimeseries2004-2016/boxplotbiovol.png",plot_violin,width=16,height=8,dpi=450)
+
 
