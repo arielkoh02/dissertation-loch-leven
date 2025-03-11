@@ -212,3 +212,38 @@ plot_seasonalbiovol<-ggarrange(plot_seasonalcryto, plot_seasonalcyano, plot_seas
 plot_seasonalbiovol
 ggsave("output/seasonaltimeseries/biovol.png",plot_seasonalbiovol,width=16,height=8,dpi=450)
 ggsave("output/seasonaltimeseries2004-2016/biovol.png",plot_seasonalbiovol,width=16,height=8,dpi=450)
+
+phyto_long <- phyto_seasonal_average %>%
+  select(season, Cryto.Biovolume, Cyano.Biovolume, Diatoms.Biovolume, Greens.Biovolume) %>%
+  pivot_longer(cols = -season, names_to = "Phytoplankton_Group", values_to = "Biovolume")
+
+plot_violin <- ggplot(phyto_long, aes(x = season, y = Biovolume, fill = season)) +
+  geom_violin() +
+  facet_wrap(~Phytoplankton_Group, scales = "free_y") +  # Separate plots per group
+  labs(title = "Seasonal Phytoplankton Biovolume Distributions",
+       x = "Season",
+       y = "Biovolume") +
+  theme_classic() +
+  scale_fill_manual(values = c("Winter" = "lightblue", "Spring" = "lightgreen", 
+                               "Summer" = "maroon", "Autumn" = "orange")) +
+  theme(legend.position = "none") 
+
+plot_violin
+ggsave("output/seasonaltimeseries2004-2016/violinbiovol.png",plot_violin,width=16,height=8,dpi=450)
+
+
+
+plot_boxplot <- ggplot(phyto_long, aes(x = season, y = Biovolume, fill = season)) +
+  geom_boxplot() +
+  facet_wrap(~Phytoplankton_Group, scales = "free_y") +  # Separate plots per group
+  labs(title = "Seasonal Phytoplankton Biovolume Distributions",
+       x = "Season",
+       y = "Biovolume") +
+  theme_classic() +
+  scale_fill_manual(values = c("Winter" = "lightblue", "Spring" = "lightgreen", 
+                               "Summer" = "maroon", "Autumn" = "orange")) +
+  theme(legend.position = "none") 
+
+plot_boxplot
+ggsave("output/seasonaltimeseries2004-2016/boxplotbiovol.png",plot_violin,width=16,height=8,dpi=450)
+
