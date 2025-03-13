@@ -15,6 +15,8 @@ alldata<-read.csv("data/csv/alldata-2004-2016.csv")
 
 View(alldata)
 
+alldata<-alldata %>% mutate(Total.Biovolume=log(Total.Biovolume))
+  
 ### chemical predictors
 ## SRP 
 #linear model with just phosphorus as a fixed effect
@@ -28,7 +30,8 @@ plot(mod1SRPplot)
 alldatalong <- all_data %>%
   pivot_longer(cols = ends_with("Biovolume"),  # Select biovolume columns
                names_to = "Phytoplankton_Group",  # Create new column for names
-               values_to = "Biovolume") 
+               values_to = "Biovolume") %>% 
+  mutate(Biovolume= log(Biovolume))
 
 View(alldatalong)
 
