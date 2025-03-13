@@ -174,7 +174,7 @@ summary(mod3SRSi)
 mod3SRSiPlot<-simulateResiduals(fittedModel = mod3SRSi, plot = F)
 plot(mod3SRSiPlot)
 
-#linear model taking into account srp & phytoplankton group interation
+#linear model taking into account srp & phytoplankton group interaction
 mod3SRSiint <- lmerTest::lmer(Biovolume ~ RB5.SRSi*Phytoplankton_Group + (1 | Year), 
                              data = all_data_long)
 summary(mod3SRSiint)
@@ -190,7 +190,7 @@ summary(mod4SRSi)
 mod4SRSiplot<-simulateResiduals(fittedModel = mod4SRSi, plot = F)
 plot(mod4SRSiplot)
 
-#linear model taking into account srp & phytoplankton group interation
+#linear model taking into account srp & phytoplankton group interaction
 mod4SRSiint <- lmerTest::lmer(Total.Biovolume ~ RB5.SRSi*Season + (1 | Year), 
                              data = alldata)
 summary(mod4SRSiint)
@@ -200,3 +200,183 @@ plot(mod4intSRSiplot)
 
 #AIC 
 AIC(mod1SRSi,mod2SRSi,mod2intSRSi,mod3SRSi,mod3SRSiint,mod4SRSi,mod4SRSiint)
+
+### physical predictors
+
+## pH
+#linear model with just phosphorus as a fixed effect
+mod1pH <- lmerTest::lmer(Total.Biovolume ~ RB5.pH +(1|Year), data=alldata)
+summary(mod1pH)
+
+mod1pHplot<-simulateResiduals(fittedModel = mod1pH, plot = F)
+plot(mod1pHplot)
+
+#linear model taking into account srp & phytoplankton group & season 
+mod2pH <- lmerTest::lmer(Biovolume ~ RB5.pH + Phytoplankton_Group + Season + (1 | Year), 
+                           data = all_data_long)
+summary(mod2pH)
+
+mod2pHplot<-simulateResiduals(fittedModel = mod2pH, plot = F)
+plot(mod2pHplot)
+
+#linear model taking into account srp & phytoplankton group & season interaction
+mod2intpH <- lmerTest::lmer(Biovolume ~ RB5.pH*Phytoplankton_Group*Season + (1 | Year), 
+                              data = all_data_long)
+summary(mod2intpH)
+
+mod2intpHplot<-simulateResiduals(fittedModel = mod2intpH, plot = F)
+plot(mod2intpHplot)
+
+#linear model taking into account srp & phytoplankton group 
+mod3pH <- lmerTest::lmer(Biovolume ~ RB5.pH + Phytoplankton_Group + (1 | Year), 
+                           data = all_data_long)
+summary(mod3pH)
+
+mod3pHPlot<-simulateResiduals(fittedModel = mod3pH, plot = F)
+plot(mod3pHPlot)
+
+#linear model taking into account srp & phytoplankton group interaction
+mod3pHint <- lmerTest::lmer(Biovolume ~ RB5.pH*Phytoplankton_Group + (1 | Year), 
+                              data = all_data_long)
+summary(mod3pHint)
+
+mod3intpHplot<-simulateResiduals(fittedModel = mod3pHint, plot = F)
+plot(mod3intpHplot)
+
+#linear model taking into account srp & season
+mod4pH<- lmerTest::lmer(Total.Biovolume ~ RB5.pH + Season + (1 | Year), 
+                           data = alldata)
+summary(mod4pH)
+
+mod4pHplot<-simulateResiduals(fittedModel = mod4pH, plot = F)
+plot(mod4pHplot)
+
+#linear model taking into account srp & phytoplankton group interaction
+mod4pHint <- lmerTest::lmer(Total.Biovolume ~ RB5.pH*Season + (1 | Year), 
+                              data = alldata)
+summary(mod4pHint)
+
+mod4intpHplot<-simulateResiduals(fittedModel = mod4pHint, plot = F)
+plot(mod4intpHplot)
+
+#AIC 
+AIC(mod1pH,mod2pH,mod2intpH,mod3pH,mod3pHint,mod4pH,mod4pHint)
+
+## SD
+#linear model with just phosphorus as a fixed effect
+mod1SD <- lmerTest::lmer(Total.Biovolume ~ RB5.SD +(1|Year), data=alldata)
+summary(mod1SD)
+
+mod1SDplot<-simulateResiduals(fittedModel = mod1SD, plot = F)
+plot(mod1SDplot)
+
+#linear model taking into account srp & phytoplankton group & season 
+mod2SD <- lmerTest::lmer(Biovolume ~ RB5.SD + Phytoplankton_Group + Season + (1 | Year), 
+                         data = all_data_long)
+summary(mod2SD)
+
+mod2SDplot<-simulateResiduals(fittedModel = mod2SD, plot = F)
+plot(mod2SDplot)
+
+#linear model taking into account srp & phytoplankton group & season interaction
+mod2intSD <- lmerTest::lmer(Biovolume ~ RB5.SD*Phytoplankton_Group*Season + (1 | Year), 
+                            data = all_data_long)
+summary(mod2intSD)
+
+mod2intSDplot<-simulateResiduals(fittedModel = mod2intSD, plot = F)
+plot(mod2intSDplot)
+
+#linear model taking into account srp & phytoplankton group 
+mod3SD <- lmerTest::lmer(Biovolume ~ RB5.SD + Phytoplankton_Group + (1 | Year), 
+                         data = all_data_long)
+summary(mod3SD)
+
+mod3SDPlot<-simulateResiduals(fittedModel = mod3SD, plot = F)
+plot(mod3SDPlot)
+
+#linear model taking into account srp & phytoplankton group interaction
+mod3SDint <- lmerTest::lmer(Biovolume ~ RB5.SD*Phytoplankton_Group + (1 | Year), 
+                            data = all_data_long)
+summary(mod3SDint)
+
+mod3intSDplot<-simulateResiduals(fittedModel = mod3SDint, plot = F)
+plot(mod3intSDplot)
+
+#linear model taking into account srp & season
+mod4SD<- lmerTest::lmer(Total.Biovolume ~ RB5.SD + Season + (1 | Year), 
+                        data = alldata)
+summary(mod4SD)
+
+mod4SDplot<-simulateResiduals(fittedModel = mod4SD, plot = F)
+plot(mod4SDplot)
+
+#linear model taking into account srp & phytoplankton group interaction
+mod4SDint <- lmerTest::lmer(Total.Biovolume ~ RB5.SD*Season + (1 | Year), 
+                            data = alldata)
+summary(mod4SDint)
+
+mod4intSDplot<-simulateResiduals(fittedModel = mod4SDint, plot = F)
+plot(mod4intSDplot)
+
+#AIC 
+AIC(mod1SD,mod2SD,mod2intSD,mod3SD,mod3SDint,mod4SD,mod4SDint)
+
+## Temperature 
+#linear model with just phosphorus as a fixed effect
+mod1Temp <- lmerTest::lmer(Total.Biovolume ~ RB5.Temp +(1|Year), data=alldata)
+summary(mod1Temp)
+
+mod1Tempplot<-simulateResiduals(fittedModel = mod1Temp, plot = F)
+plot(mod1Tempplot)
+
+#linear model taking into account srp & phytoplankton group & season 
+mod2Temp <- lmerTest::lmer(Biovolume ~ RB5.Temp + Phytoplankton_Group + Season + (1 | Year), 
+                         data = all_data_long)
+summary(mod2Temp)
+
+mod2Tempplot<-simulateResiduals(fittedModel = mod2Temp, plot = F)
+plot(mod2Tempplot)
+
+#linear model taking into account srp & phytoplankton group & season interaction
+mod2intTemp <- lmerTest::lmer(Biovolume ~ RB5.Temp*Phytoplankton_Group*Season + (1 | Year), 
+                            data = all_data_long)
+summary(mod2intTemp)
+
+mod2intTempplot<-simulateResiduals(fittedModel = mod2intTemp, plot = F)
+plot(mod2intTempplot)
+
+#linear model taking into account srp & phytoplankton group 
+mod3Temp <- lmerTest::lmer(Biovolume ~ RB5.Temp + Phytoplankton_Group + (1 | Year), 
+                         data = all_data_long)
+summary(mod3Temp)
+
+mod3TempPlot<-simulateResiduals(fittedModel = mod3Temp, plot = F)
+plot(mod3TempPlot)
+
+#linear model taking into account srp & phytoplankton group interaction
+mod3Tempint <- lmerTest::lmer(Biovolume ~ RB5.Temp*Phytoplankton_Group + (1 | Year), 
+                            data = all_data_long)
+summary(mod3Tempint)
+
+mod3intTempplot<-simulateResiduals(fittedModel = mod3Tempint, plot = F)
+plot(mod3intTempplot)
+
+#linear model taking into account srp & season
+mod4Temp<- lmerTest::lmer(Total.Biovolume ~ RB5.Temp + Season + (1 | Year), 
+                        data = alldata)
+summary(mod4Temp)
+
+mod4Tempplot<-simulateResiduals(fittedModel = mod4Temp, plot = F)
+plot(mod4Tempplot)
+
+#linear model taking into account srp & phytoplankton group interaction
+mod4Tempint <- lmerTest::lmer(Total.Biovolume ~ RB5.Temp*Season + (1 | Year), 
+                            data = alldata)
+summary(mod4Tempint)
+
+mod4intTempplot<-simulateResiduals(fittedModel = mod4Tempint, plot = F)
+plot(mod4intTempplot)
+
+#AIC 
+AIC(mod1Temp,mod2Temp,mod2intTemp,mod3Temp,mod3Tempint,mod4Temp,mod4Tempint)
+## Predator 
