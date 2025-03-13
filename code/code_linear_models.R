@@ -379,4 +379,63 @@ plot(mod4intTempplot)
 
 #AIC 
 AIC(mod1Temp,mod2Temp,mod2intTemp,mod3Temp,mod3Tempint,mod4Temp,mod4Tempint)
+
+
 ## Predator 
+#linear model with just phosphorus as a fixed effect
+mod1Daphnia <- lmerTest::lmer(Total.Biovolume ~ Daphnia +(1|Year), data=alldata)
+summary(mod1Daphnia)
+
+mod1Daphniaplot<-simulateResiduals(fittedModel = mod1Daphnia, plot = F)
+plot(mod1Daphniaplot)
+
+#linear model taking into account srp & phytoplankton group & season 
+mod2Daphnia <- lmerTest::lmer(Biovolume ~ Daphnia + Phytoplankton_Group + Season + (1 | Year), 
+                           data = all_data_long)
+summary(mod2Daphnia)
+
+mod2Daphniaplot<-simulateResiduals(fittedModel = mod2Daphnia, plot = F)
+plot(mod2Daphniaplot)
+
+#linear model taking into account srp & phytoplankton group & season interaction
+mod2intDaphnia <- lmerTest::lmer(Biovolume ~ Daphnia*Phytoplankton_Group*Season + (1 | Year), 
+                              data = all_data_long)
+summary(mod2intDaphnia)
+
+mod2intDaphniaplot<-simulateResiduals(fittedModel = mod2intDaphnia, plot = F)
+plot(mod2intDaphniaplot)
+
+#linear model taking into account srp & phytoplankton group 
+mod3Daphnia <- lmerTest::lmer(Biovolume ~ Daphnia + Phytoplankton_Group + (1 | Year), 
+                           data = all_data_long)
+summary(mod3Daphnia)
+
+mod3DaphniaPlot<-simulateResiduals(fittedModel = mod3Daphnia, plot = F)
+plot(mod3DaphniaPlot)
+
+#linear model taking into account srp & phytoplankton group interaction
+mod3Daphniaint <- lmerTest::lmer(Biovolume ~ Daphnia*Phytoplankton_Group + (1 | Year), 
+                              data = all_data_long)
+summary(mod3Daphniaint)
+
+mod3intDaphniaplot<-simulateResiduals(fittedModel = mod3Daphniaint, plot = F)
+plot(mod3intDaphniaplot)
+
+#linear model taking into account srp & season
+mod4Daphnia<- lmerTest::lmer(Total.Biovolume ~ Daphnia + Season + (1 | Year), 
+                          data = alldata)
+summary(mod4Daphnia)
+
+mod4Daphniaplot<-simulateResiduals(fittedModel = mod4Daphnia, plot = F)
+plot(mod4Daphniaplot)
+
+#linear model taking into account srp & phytoplankton group interaction
+mod4Daphniaint <- lmerTest::lmer(Total.Biovolume ~ Daphnia*Season + (1 | Year), 
+                              data = alldata)
+summary(mod4Daphniaint)
+
+mod4intDaphniaplot<-simulateResiduals(fittedModel = mod4Daphniaint, plot = F)
+plot(mod4intDaphniaplot)
+
+#AIC 
+AIC(mod1Daphnia,mod2Daphnia,mod2intDaphnia,mod3Daphnia,mod3Daphniaint,mod4Daphnia,mod4Daphniaint)
