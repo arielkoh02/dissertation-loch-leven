@@ -27,17 +27,18 @@ mod1SRPplot<-simulateResiduals(fittedModel = mod1SRP, plot = F)
 plot(mod1SRPplot)
 
 #convert to long form 
-alldatalong <- all_data %>%
+alldatalong <- alldata %>%
   pivot_longer(cols = ends_with("Biovolume"),  # Select biovolume columns
                names_to = "Phytoplankton_Group",  # Create new column for names
                values_to = "Biovolume") %>% 
-  mutate(Biovolume= log(Biovolume))
+  mutate(Biovolume= log(Biovolume)) %>% 
+  filter(!(Phytoplankton_Group=='Total.Biovolume'))
 
 View(alldatalong)
 
 #linear model taking into account srp & phytoplankton group & season 
 mod2SRP <- lmerTest::lmer(Biovolume ~ RB5.SRP + Phytoplankton_Group + Season + (1 | Year), 
-               data = all_data_long)
+               data = alldatalong)
 summary(mod2SRP)
 
 mod2SRPlot<-simulateResiduals(fittedModel = mod2SRP, plot = F)
@@ -45,7 +46,7 @@ plot(mod2SRPlot)
 
 #linear model taking into account srp & phytoplankton group & season interaction
 mod2intSRP <- lmerTest::lmer(Biovolume ~ RB5.SRP*Phytoplankton_Group*Season + (1 | Year), 
-                         data = all_data_long)
+                         data = alldatalong)
 summary(mod2intSRP)
 
 mod2intSRPplot<-simulateResiduals(fittedModel = mod2intSRP, plot = F)
