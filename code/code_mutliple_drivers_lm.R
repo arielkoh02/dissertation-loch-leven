@@ -7,9 +7,10 @@ library(tidyverse)
 library(lmerTest)
 library(DHARMa)
 
-alldata<-read.csv("data/csv/alldata-2004-2016.csv")
+alldata<-read.csv("data/csv/alldata-2004-2016v2.csv")
 
-alldata<-alldata %>% mutate(Total.Biovolume=log(Total.Biovolume))
+alldata<-alldata %>% mutate(Total.Biovolume=log(Total.Biovolume)) %>% 
+  mutate(YearMonth=dmy(YearMonth))
 
 alldatalong <- alldata %>%
   pivot_longer(cols = ends_with("Biovolume"),  # Select biovolume columns
@@ -106,3 +107,4 @@ plot(mod10plot)
 
 
 AIC(mod1, mod2, mod3, mod4, mod5, mod6, mod7, mod8, mod9, mod10)
+S
