@@ -62,6 +62,8 @@ View(biovol_fulldata)
 
 write.csv(biovol_fulldata, "data/csv/biovolfulldata_2004-2016.csv")
 
+biovol_fulldata<-read.csv("data/csv/biovolfulldata_2004-2016.csv")
+
 #convert to long form 
 biovol_long <- biovol_fulldata %>%
   pivot_longer(cols = ends_with("Biovolume"),  # Select biovolume columns
@@ -224,23 +226,29 @@ phyto_long <- phyto_seasonal_average %>%
 
 View(phyto_long)
 
+phyto_long$season <- factor(phyto_long$season, levels = c("Winter", "Spring", "Summer", "Autumn"))
+
 #plotting violin plot for each phytoplankton group's average per season 
 plot_violin <- ggplot(phyto_long, aes(x = season, y = Biovolume, fill = season)) +
-  geom_violin() +
+  geom_violin(alpha = 0.6) +
+  stat_summary(fun = median, geom = "point", color = "black", size = 2) +  # Black dot for median
+  stat_summary(fun.data = function(y) {
+    data.frame(y = median(y), ymin = quantile(y, 0.25), ymax = quantile(y, 0.75))
+  }, geom = "errorbar", width = 0.1, linetype = "dashed", color = "black") +
   facet_wrap(~Phytoplankton_Group, scales = "free_y") +  # Separate plots per group
   labs(title = "Seasonal Phytoplankton Biovolume Distributions",
        x = "Season",
        y = "Biovolume") +
   theme_classic() +
   scale_fill_manual(values = c("Winter" = "lightblue", "Spring" = "lightgreen", 
-                               "Summer" = "maroon", "Autumn" = "orange")) +
+                               "Summer" = "violet", "Autumn" = "orange")) +
   theme(legend.position = "none") 
 
 plot_violin
-ggsave("output/seasonaltimeseries2004-2016/violinbiovol.png",plot_violin,width=16,height=8,dpi=450)
+ggsave("output/seasonaltimeseries2004-2016/violinbiovolwithmedian.png",plot_violin,width=16,height=8,dpi=450)
 
 
-#plotting violin plot for each phytoplankton group's average per season 
+#plotting boxplot plot for each phytoplankton group's average per season 
 plot_boxplot <- ggplot(phyto_long, aes(x = season, y = Biovolume, fill = season)) +
   geom_boxplot() +
   facet_wrap(~Phytoplankton_Group, scales = "free_y") +  # Separate plots per group
@@ -253,6 +261,6 @@ plot_boxplot <- ggplot(phyto_long, aes(x = season, y = Biovolume, fill = season)
   theme(legend.position = "none") 
 
 plot_boxplot
-ggsave("output/seasonaltimeseries2004-2016/boxplotbiovol.png",plot_violin,width=16,height=8,dpi=450)
+ggsave("output/seasonaltimeseries2004-2016/boxplotbiovol.png",plot_boxplot,width=16,height=8,dpi=450)
 
 

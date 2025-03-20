@@ -29,13 +29,13 @@ scale_factor_cryto <- max_cryto / max_daphnia
 
 # Plot for Cryptophytes 
 plot1<-ggplot(data=predator.phyto.data, aes(x = date_for_plot)) +
-  geom_line(aes(y = Cryto.Biovolume), color = "black",linewidth=1) +  # Primary Y-axis: Phytoplankton
-  geom_point(aes(y = Cryto.Biovolume, color = season,size=1.25)) +
-  geom_line(aes(y = Daphnia_scaled_cryto), color = "grey",linewidth=1,linetype="dashed") + # Secondary Y-axis: Daphnia
-  geom_point(aes(y = Daphnia_scaled_cryto, color = season,size=1.25),shape=10)+
+  geom_line(aes(y = Cryto.Biovolume), color = "black",linewidth=0.75) +  # Primary Y-axis: Phytoplankton
+  geom_point(aes(y = Cryto.Biovolume, color = season),size=2.75) +
+  geom_line(aes(y = Daphnia_scaled_cryto), color = "grey",linewidth=0.75,linetype="dashed") + # Secondary Y-axis: Daphnia
+  geom_point(aes(y = Daphnia_scaled_cryto, color = season),size=2.75,shape=10)+
   scale_y_continuous(
     name = "Cryto Biovolume",
-    sec.axis = sec_axis(~ ./scale_factor, name = "Daphnia Density")  # No transformation, keeps original values
+    sec.axis = sec_axis(~ ./scale_factor_cryto, name = "Daphnia Density")  # No transformation, keeps original values
   ) +
   labs(x = "Year", title = "Seasonal Cryto Biovolume Trends with Daphnia") +
   theme_classic() +
@@ -57,10 +57,10 @@ scale_factor_cyano <- max_cyano / max_daphnia
 
 # Plot for Cyanobacteria
 plot2<-ggplot(data=predator.phyto.data, aes(x = date_for_plot)) +
-  geom_line(aes(y = Cyano.Biovolume), color = "black",linewidth=1) +  # Primary Y-axis: Phytoplankton
-  geom_point(aes(y = Cyano.Biovolume, color = season,size=1.25)) +
-  geom_line(aes(y = Daphnia_scaled_cyano), color = "grey", linetype = "dashed",linewidth=1) + # Secondary Y-axis: Daphnia
-  geom_point(aes(y = Daphnia_scaled_cyano, color = season,size=1.25),shape=10)+
+  geom_line(aes(y = Cyano.Biovolume), color = "black",linewidth=0.75) +  # Primary Y-axis: Phytoplankton
+  geom_point(aes(y = Cyano.Biovolume, color = season),size=2.75) +
+  geom_line(aes(y = Daphnia_scaled_cyano), color = "grey", linetype = "dashed",linewidth=0.75) + # Secondary Y-axis: Daphnia
+  geom_point(aes(y = Daphnia_scaled_cyano, color = season),size=2.75,shape=10)+
   scale_y_continuous(
     name = "Cyano Biovolume",
     sec.axis = sec_axis(~ ./scale_factor_cyano, name = "Daphnia Density")  # No transformation, keeps original values
@@ -81,10 +81,10 @@ scale_factor_diatoms <- max_diatoms / max_daphnia
 
 # Plot for Diatoms
 plot3<-ggplot(data=predator.phyto.data, aes(x = date_for_plot)) +
-  geom_line(aes(y = Diatoms.Biovolume), color = "black",linewidth=1) +  # Primary Y-axis: Phytoplankton
-  geom_point(aes(y = Diatoms.Biovolume, color = season,size=1.25)) +
-  geom_line(aes(y = Daphnia_scaled_diatoms), color = "grey", linetype = "dashed",linewidth=1) + # Secondary Y-axis: Daphnia
-  geom_point(aes(y = Daphnia_scaled_diatoms, color = season,size=1.25),shape=10)+
+  geom_line(aes(y = Diatoms.Biovolume), color = "black",linewidth=0.75) +  # Primary Y-axis: Phytoplankton
+  geom_point(aes(y = Diatoms.Biovolume, color = season),size=2.75) +
+  geom_line(aes(y = Daphnia_scaled_diatoms), color = "grey", linetype = "dashed",linewidth=0.75) + # Secondary Y-axis: Daphnia
+  geom_point(aes(y = Daphnia_scaled_diatoms, color = season),size=2.75,shape=10)+
   scale_y_continuous(
     name = "Diatom Biovolume",
     sec.axis = sec_axis(~ ./scale_factor_diatoms, name = "Daphnia Density")  # No transformation, keeps original values
@@ -105,10 +105,10 @@ scale_factor_greens <- max_greens / max_daphnia
 
 # Plot for Diatoms
 plot4<-ggplot(data=predator.phyto.data, aes(x = date_for_plot)) +
-  geom_line(aes(y = Greens.Biovolume), color = "black",linewidth=1) +  # Primary Y-axis: Phytoplankton
-  geom_point(aes(y = Greens.Biovolume, color = season,size=1.25)) +
-  geom_line(aes(y = Daphnia_scaled_greens), color = "grey", linetype = "dashed",linewidth=1) + # Secondary Y-axis: Daphnia
-  geom_point(aes(y = Daphnia_scaled_greens, color = season,size=1.25),shape=10)+
+  geom_line(aes(y = Greens.Biovolume), color = "black",linewidth=0.75) +  # Primary Y-axis: Phytoplankton
+  geom_point(aes(y = Greens.Biovolume, color = season),size=2.75) +
+  geom_line(aes(y = Daphnia_scaled_greens), color = "grey", linetype = "dashed",linewidth=0.75) + # Secondary Y-axis: Daphnia
+  geom_point(aes(y = Daphnia_scaled_greens, color = season),size=2,75,shape=10)+
   scale_y_continuous(
     name = "Greens Biovolume",
     sec.axis = sec_axis(~ ./scale_factor_greens, name = "Daphnia Density")  # No transformation, keeps original values
