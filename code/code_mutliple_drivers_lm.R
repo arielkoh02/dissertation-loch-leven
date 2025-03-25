@@ -1,11 +1,13 @@
 #13/3/25
 #trying to do multiple drivers now 
 
-rm=list(ls)
+rm(list=ls())
 
 library(tidyverse)
 library(lmerTest)
 library(DHARMa)
+install.packages("outliers")  # Install the package if not already installed
+library(outliers)
 
 alldata<-read.csv("data/csv/alldata-2004-2016v2.csv")
 
@@ -17,6 +19,7 @@ alldatalong <- alldata %>%
                names_to = "Phytoplankton_Group",  # Create new column for names
                values_to = "Biovolume") %>% 
   mutate(Biovolume= log(Biovolume)) %>% 
+  mutate(RB5.pH = scale(RB5.pH))%>% 
   filter(!(Phytoplankton_Group=='Total.Biovolume'))
 
 View(alldata)
@@ -28,13 +31,6 @@ summary(mod1)
 
 mod1plot<-simulateResiduals(fittedModel = mod1, plot = F)
 plot(mod1plot)
-
-mod2 <- lmerTest::lmer(Biovolume ~ RB5.SRP + Phytoplankton_Group + Season + (1 | Year), 
-                          data = alldatalong)
-summary(mod2)
-
-mod2plot<-simulateResiduals(fittedModel = mod2, plot = F)
-plot(mod2plot)
 
 mod3 <- lmerTest::lmer(Biovolume ~ RB5.SRP + Phytoplankton_Group*Season + (1 | Year), 
                        data = alldatalong)
@@ -63,9 +59,8 @@ summary(mod5)
 mod5plot<-simulateResiduals(fittedModel = mod5, plot = F)
 plot(mod5plot)
 
-AIC(mod1,mod2,mod3,mod4,mod5)
-
 #NO3+SRP+Daphnia+pH
+
 mod6 <- lmerTest::lmer(Biovolume ~ RB5.SRP + RB5.NO3 + Daphnia + RB5.pH + Phytoplankton_Group*Season + (1 | Year), 
                        data = alldatalong)
 summary(mod6)
@@ -74,7 +69,7 @@ mod6plot<-simulateResiduals(fittedModel = mod6, plot = F)
 plot(mod6plot)
 
 #NO3+SRP+Daphnia+pH+temp
-mod7 <- lmerTest::lmer(Biovolume ~ RB5.SRP + RB5.NO3 + Daphnia + RB5.pH + RB5.Temp + Phytoplankton_Group*Season + (1 | Year), 
+mod7 <- lmerTest::lmer(Biovolume ~ RB5.SRP + RB5.NO3 + Daphnia + RB5.pH+ RB5.Temp + Phytoplankton_Group*Season + (1 | Year), 
                        data = alldatalong)
 summary(mod7)
 

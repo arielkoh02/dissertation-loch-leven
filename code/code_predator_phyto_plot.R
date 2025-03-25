@@ -1,6 +1,9 @@
 # 18/3
 # daphnia + phytoplankton biovolume plot 
 
+#install.packages("RColorBrewer")
+library(RColorBrewer)
+
 predator.phyto.data <- full_join(
   select(phyto_seasonal_average,
          season_year,
@@ -18,7 +21,11 @@ predator.phyto.data <- full_join(
 
 View(predator.phyto.data)
 
+min_value <- 0.001
+max_value <- max(c(cryto_long$Value, cyano_long$Value, diatoms_long$Value, greens_long$Value), na.rm = TRUE)
 
+min_value
+max_value
 # Normalize Daphnia so it fits on the same scale as biovolume
 predator.phyto.data <- predator.phyto.data %>%
   mutate(Daphnia_scaled_cryto = Daphnia / max(Daphnia, na.rm = TRUE) * max(Cryto.Biovolume, na.rm = TRUE))
@@ -27,24 +34,32 @@ max_daphnia <- max(predator.phyto.data$Daphnia, na.rm = TRUE)
 max_cryto <- max(predator.phyto.data$Cryto.Biovolume, na.rm = TRUE)
 scale_factor_cryto <- max_cryto / max_daphnia
 
-# Plot for Cryptophytes 
-plot1<-ggplot(data=predator.phyto.data, aes(x = date_for_plot)) +
-  geom_line(aes(y = Cryto.Biovolume), color = "black",linewidth=0.75) +  # Primary Y-axis: Phytoplankton
-  geom_point(aes(y = Cryto.Biovolume, color = season),size=2.75) +
-  geom_line(aes(y = Daphnia_scaled_cryto), color = "grey",linewidth=0.75,linetype="dashed") + # Secondary Y-axis: Daphnia
-  geom_point(aes(y = Daphnia_scaled_cryto, color = season),size=2.75,shape=10)+
-  scale_y_continuous(
-    name = "Cryto Biovolume",
-    sec.axis = sec_axis(~ ./scale_factor_cryto, name = "Daphnia Density")  # No transformation, keeps original values
-  ) +
-  labs(x = "Year", title = "Seasonal Cryto Biovolume Trends with Daphnia") +
-  theme_classic() +
+cryto_daphnia_data<-predator.phyto.data %>% 
+  select(date_for_plot,Cryto.Biovolume, Daphnia_scaled_cryto) %>% 
+  rename(Crytomonads="Cryto.Biovolume",Daphnia="Daphnia_scaled_cryto")  
+View(cryto_daphnia_data)
+
+cryto_long<-cryto_daphnia_data %>% 
+  pivot_longer(cols = c("Crytomonads","Daphnia"),  # Select biovolume columns
+                            names_to = "Type",  # Create new column for names
+                            values_to = "Value")
   
-  # Custom legend settings
-  scale_color_manual(
-    name = "Season",
-    values = c("Winter" = "lightblue", "Spring" = "lightgreen", 
-               "Summer" = "maroon", "Autumn" = "orange"))
+
+View(cryto_long)
+
+# Plot for Cryptophytes 
+plot1<-ggplot(data=cryto_long, aes(x = date_for_plot, y=Value)) +
+  geom_line(aes(linetype=Type,colour=Type),linewidth=0.75) +  # Primary Y-axis: Phytoplankton
+  scale_y_continuous(
+    name = "Crytomonads Biovolume (µm^3 per ml)",
+    sec.axis = sec_axis(~ ./scale_factor_cryto, name = "Daphnia Density (individuals/L)")  # No transformation, keeps original values
+  ) +
+  labs(x = "Year", title="Crytomonads") +
+  theme_classic(base_size=13)+
+  theme(legend.position="bottom")+
+  scale_colour_manual(values = c("Crytomonads" = "#377EB8",  # Green from Set1
+                                 "Daphnia" = "#E41A1C")) 
+
 plot1
 
 # Normalize Daphnia so it fits on the same scale as biovolume
@@ -55,20 +70,29 @@ max_daphnia <- max(predator.phyto.data$Daphnia, na.rm = TRUE)
 max_cyano <- max(predator.phyto.data$Cyano.Biovolume, na.rm = TRUE)
 scale_factor_cyano <- max_cyano / max_daphnia
 
+cyano_daphnia_data<-predator.phyto.data %>% 
+  select(date_for_plot,Cyano.Biovolume, Daphnia_scaled_cyano) %>% 
+  rename(Cyanobacteria="Cyano.Biovolume",Daphnia="Daphnia_scaled_cyano")  
+View(cyano_daphnia_data)
+
+cyano_long<-cyano_daphnia_data %>% 
+  pivot_longer(cols = c("Cyanobacteria","Daphnia"),  # Select biovolume columns
+               names_to = "Type",  # Create new column for names
+               values_to = "Value")
+
 # Plot for Cyanobacteria
-plot2<-ggplot(data=predator.phyto.data, aes(x = date_for_plot)) +
-  geom_line(aes(y = Cyano.Biovolume), color = "black",linewidth=0.75) +  # Primary Y-axis: Phytoplankton
-  geom_point(aes(y = Cyano.Biovolume, color = season),size=2.75) +
-  geom_line(aes(y = Daphnia_scaled_cyano), color = "grey", linetype = "dashed",linewidth=0.75) + # Secondary Y-axis: Daphnia
-  geom_point(aes(y = Daphnia_scaled_cyano, color = season),size=2.75,shape=10)+
+plot2<-ggplot(data=cyano_long, aes(x = date_for_plot, y=Value)) +
+  geom_line(aes(linetype=Type,colour=Type),linewidth=0.75) +  # Primary Y-axis: Phytoplankton
   scale_y_continuous(
-    name = "Cyano Biovolume",
-    sec.axis = sec_axis(~ ./scale_factor_cyano, name = "Daphnia Density")  # No transformation, keeps original values
+    name = "Cyanobacteria Biovolume (µm^3 per ml)",
+    sec.axis = sec_axis(~ ./scale_factor_cyano, name = "Daphnia Density (individuals/L)")  # No transformation, keeps original values
   ) +
-  labs(x = "Year", title = "Seasonal Cyano Biovolume Trends with Daphnia") +
-  theme_classic() +
-  scale_color_manual(values = c("Winter" = "lightblue", "Spring" = "lightgreen", 
-                                "Summer" = "maroon", "Autumn" = "orange"))
+  labs(x = "Year", title="Cyanobacteria") +
+  theme_classic(base_size=13)+
+  theme(legend.position="bottom")+
+  scale_colour_manual(values = c("Cyanobacteria" = "#984EA3",  # Green from Set1
+                                "Daphnia" = "#E41A1C")) 
+
 plot2
 
 # Normalize Daphnia so it fits on the same scale as biovolume
@@ -79,22 +103,31 @@ max_daphnia <- max(predator.phyto.data$Daphnia, na.rm = TRUE)
 max_diatoms <- max(predator.phyto.data$Diatoms.Biovolume, na.rm = TRUE)
 scale_factor_diatoms <- max_diatoms / max_daphnia
 
-# Plot for Diatoms
-plot3<-ggplot(data=predator.phyto.data, aes(x = date_for_plot)) +
-  geom_line(aes(y = Diatoms.Biovolume), color = "black",linewidth=0.75) +  # Primary Y-axis: Phytoplankton
-  geom_point(aes(y = Diatoms.Biovolume, color = season),size=2.75) +
-  geom_line(aes(y = Daphnia_scaled_diatoms), color = "grey", linetype = "dashed",linewidth=0.75) + # Secondary Y-axis: Daphnia
-  geom_point(aes(y = Daphnia_scaled_diatoms, color = season),size=2.75,shape=10)+
-  scale_y_continuous(
-    name = "Diatom Biovolume",
-    sec.axis = sec_axis(~ ./scale_factor_diatoms, name = "Daphnia Density")  # No transformation, keeps original values
-  ) +
-  labs(x = "Year", title = "Seasonal Diatoms Biovolume Trends with Daphnia") +
-  theme_classic() +
-  scale_color_manual(values = c("Winter" = "lightblue", "Spring" = "lightgreen", 
-                                "Summer" = "maroon", "Autumn" = "orange"))
-plot3
+diatoms_daphnia_data<-predator.phyto.data %>% 
+  select(date_for_plot,Diatoms.Biovolume, Daphnia_scaled_diatoms) %>% 
+  rename(Diatoms="Diatoms.Biovolume",Daphnia="Daphnia_scaled_diatoms")  
+View(diatoms_daphnia_data)
 
+diatoms_long<-diatoms_daphnia_data %>% 
+  pivot_longer(cols = c("Diatoms","Daphnia"),  # Select biovolume columns
+               names_to = "Type",  # Create new column for names
+               values_to = "Value") %>% 
+  mutate(Type = factor(Type, levels = c("Diatoms", "Daphnia")))
+
+# Plot for Cyanobacteria
+plot3<-ggplot(data=diatoms_long, aes(x = date_for_plot, y=Value)) +
+  geom_line(aes(linetype=Type,colour=Type),linewidth=0.75) +  # Primary Y-axis: Phytoplankton
+  scale_y_continuous(
+    name = "Diatoms Biovolume (µm^3 per ml)",
+    sec.axis = sec_axis(~ ./scale_factor_diatoms, name = "Daphnia Density (individuals/L)")  # No transformation, keeps original values
+  ) +
+  labs(x = "Year", title="Diatoms") +
+  theme_classic(base_size=13)+
+  theme(legend.position="bottom")+
+  scale_colour_manual(values = c("Diatoms" = "#999999",  # Green from Set1
+                                 "Daphnia" = "#E41A1C"))
+
+plot3
 # Normalize Daphnia so it fits on the same scale as biovolume
 predator.phyto.data <- predator.phyto.data %>%
   mutate(Daphnia_scaled_greens = Daphnia / max(Daphnia, na.rm = TRUE) * max(Greens.Biovolume, na.rm = TRUE))
@@ -103,25 +136,57 @@ max_daphnia <- max(predator.phyto.data$Daphnia, na.rm = TRUE)
 max_greens <- max(predator.phyto.data$Greens.Biovolume, na.rm = TRUE)
 scale_factor_greens <- max_greens / max_daphnia
 
-# Plot for Diatoms
-plot4<-ggplot(data=predator.phyto.data, aes(x = date_for_plot)) +
-  geom_line(aes(y = Greens.Biovolume), color = "black",linewidth=0.75) +  # Primary Y-axis: Phytoplankton
-  geom_point(aes(y = Greens.Biovolume, color = season),size=2.75) +
-  geom_line(aes(y = Daphnia_scaled_greens), color = "grey", linetype = "dashed",linewidth=0.75) + # Secondary Y-axis: Daphnia
-  geom_point(aes(y = Daphnia_scaled_greens, color = season),size=2,75,shape=10)+
+greens_daphnia_data<-predator.phyto.data %>% 
+  select(date_for_plot,Greens.Biovolume, Daphnia_scaled_greens) %>% 
+  rename(Greens="Greens.Biovolume",Daphnia="Daphnia_scaled_greens")  
+View(greens_daphnia_data)
+
+greens_long<-greens_daphnia_data %>% 
+  pivot_longer(cols = c("Greens","Daphnia"),  # Select biovolume columns
+               names_to = "Type",  # Create new column for names
+               values_to = "Value") %>% 
+  mutate(Type = factor(Type, levels = c("Greens", "Daphnia")))
+
+# Plot for Cyanobacteria
+plot4<-ggplot(data=greens_long, aes(x = date_for_plot, y=Value)) +
+  geom_line(aes(linetype=Type,colour=Type),linewidth=0.75) +  # Primary Y-axis: Phytoplankton
   scale_y_continuous(
-    name = "Greens Biovolume",
-    sec.axis = sec_axis(~ ./scale_factor_greens, name = "Daphnia Density")  # No transformation, keeps original values
+    name = "Greens Biovolume (µm^3 per ml)",
+    sec.axis = sec_axis(~ ./scale_factor_diatoms, name = "Daphnia Density (individuals/L)")  # No transformation, keeps original values
   ) +
-  labs(x = "Year", title = "Seasonal Greens Biovolume Trends with Daphnia") +
-  theme_classic() +
-  scale_color_manual(values = c("Winter" = "lightblue", "Spring" = "lightgreen", 
-                                "Summer" = "maroon", "Autumn" = "orange"))
+  labs(x = "Year", title= "Greens") +
+  theme_classic(base_size=13)+
+  theme(legend.position="bottom")+
+  scale_colour_manual(values = c("Greens" = "#4DAF4A",  # Green from Set1
+                                 "Daphnia" = "#E41A1C"))
+
 plot4
 
 library(ggpubr)
 
 # Arrange in a 2x2 grid
-plot_seasonalbiovoldaphnia<-ggarrange(plot1,plot2,plot3,plot4, nrow = 2, ncol = 2, common.legend = TRUE, legend="bottom")
+plot_seasonalbiovoldaphnia<-ggarrange(plot1,plot2,plot3,plot4, nrow = 2, ncol = 2, common.legend = F, legend="bottom")
 plot_seasonalbiovoldaphnia
 ggsave("output/seasonaltimeseries2004-2016/biovoldaphnia.png",plot_seasonalbiovoldaphnia,width=16,height=8,dpi=450)
+
+
+
+# 1:1 plot 
+
+sumdata<-predator.phyto.data %>% 
+  select(Daphnia,Cryto.Biovolume,Cyano.Biovolume,Greens.Biovolume) %>% 
+  mutate(Sum.Biovolume=Cryto.Biovolume+Cyano.Biovolume+Greens.Biovolume
+  )
+
+View(sumdata)
+
+plot5<-ggplot(data=sumdata,aes(y=Sum.Biovolume,x=Daphnia))+
+  geom_point(size=3)+
+  geom_abline(slope = 1, intercept = 0,   # 1:1 line
+              color = "red", linetype = "dashed", linewidth = 1)+
+  geom_smooth(method=lm,se=F,linetype="dashed")+
+  theme_classic(base_size=22)+
+  labs(x ="Daphnia (individuals/L)", y = "Total Non-Diatoms Biovolume(µm^3 per ml)")
+plot5
+ggsave("output/seasonaltimeseries2004-2016/1to1plot.png",plot5,width=16,height=10,dpi=450)
+
