@@ -11,6 +11,8 @@ library(DHARMa)
 library(outliers)
 #install.packages("MuMIn")
 library(MuMIn)
+#install.packages("car")
+library(car)
 
 alldata<-read.csv("data/csv/alldata-2004-2016v2.csv")
 
@@ -139,6 +141,8 @@ r.squaredGLMM(mod8b)
 mod8bplot<-simulateResiduals(fittedModel = mod8b, plot = F)
 plot(mod8bplot)
 
+vif(mod8b)
+
 #NO3+SRP+Daphnia+pH+temp+water depth+DO
 mod9 <- lmerTest::lmer(Biovolume ~ RB5.SRP + RB5.NO3 + Daphnia + RB5.pH + RB5.Temp + waterlevel.masl + RB5.DO + Phytoplankton_Group*Season + (1 | Year), 
                        data = alldatalong)
@@ -157,11 +161,14 @@ r.squaredGLMM(mod9a)
 mod9aplot<-simulateResiduals(fittedModel = mod9a, plot = F)
 plot(mod9aplot)
 
+vif(mod9a)
+
 #SRP+Daphnia+temp+water depth+DO
 mod9b <- lmerTest::lmer(Biovolume ~ RB5.SRP + Daphnia + RB5.Temp + waterlevel.masl + RB5.DO + Phytoplankton_Group*Season + (1 | Year), 
                         data = alldatalong)
 summary(mod9b)
 r.squaredGLMM(mod9b)
+vif(mod9b)
 
 mod9bplot<-simulateResiduals(fittedModel = mod9b, plot = F)
 plot(mod9bplot)
