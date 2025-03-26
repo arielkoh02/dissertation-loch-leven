@@ -58,7 +58,7 @@ plot1<-ggplot(data=cryto_long, aes(x = date_for_plot, y=Value)) +
   theme_classic(base_size=13)+
   theme(legend.position="bottom")+
   scale_colour_manual(values = c("Crytomonads" = "#377EB8",  # Green from Set1
-                                 "Daphnia" = "#E41A1C")) 
+                                 "Daphnia" = "#999999")) 
 
 plot1
 
@@ -91,7 +91,7 @@ plot2<-ggplot(data=cyano_long, aes(x = date_for_plot, y=Value)) +
   theme_classic(base_size=13)+
   theme(legend.position="bottom")+
   scale_colour_manual(values = c("Cyanobacteria" = "#984EA3",  # Green from Set1
-                                "Daphnia" = "#E41A1C")) 
+                                "Daphnia" = "#999999")) 
 
 plot2
 
@@ -124,8 +124,8 @@ plot3<-ggplot(data=diatoms_long, aes(x = date_for_plot, y=Value)) +
   labs(x = "Year", title="Diatoms") +
   theme_classic(base_size=13)+
   theme(legend.position="bottom")+
-  scale_colour_manual(values = c("Diatoms" = "#999999",  # Green from Set1
-                                 "Daphnia" = "#E41A1C"))
+  scale_colour_manual(values = c("Diatoms" = "#E41A1C",  # Green from Set1
+                                 "Daphnia" = "#999999"))
 
 plot3
 # Normalize Daphnia so it fits on the same scale as biovolume
@@ -158,7 +158,7 @@ plot4<-ggplot(data=greens_long, aes(x = date_for_plot, y=Value)) +
   theme_classic(base_size=13)+
   theme(legend.position="bottom")+
   scale_colour_manual(values = c("Greens" = "#4DAF4A",  # Green from Set1
-                                 "Daphnia" = "#E41A1C"))
+                                 "Daphnia" = "#999999"))
 
 plot4
 
