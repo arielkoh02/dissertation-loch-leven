@@ -51,8 +51,8 @@ View(cryto_long)
 plot1<-ggplot(data=cryto_long, aes(x = date_for_plot, y=Value)) +
   geom_line(aes(linetype=Type,colour=Type),linewidth=0.75) +  # Primary Y-axis: Phytoplankton
   scale_y_continuous(
-    name = "Crytomonads Biovolume (µm^3 per ml)",
-    sec.axis = sec_axis(~ ./scale_factor_cryto, name = "Daphnia Density (individuals/L)")  # No transformation, keeps original values
+    name = bquote("Biovolume ("*mu*m^3~ml^-1*")"),
+    sec.axis = sec_axis(~ ./scale_factor_cryto)  # No transformation, keeps original values
   ) +
   labs(x = "Year", title="Crytomonads") +
   theme_classic(base_size=13)+
@@ -80,16 +80,22 @@ cyano_long<-cyano_daphnia_data %>%
                names_to = "Type",  # Create new column for names
                values_to = "Value")
 
+scientific_10 <- function(x) {
+  labels <- scales::scientific_format()(x)       # Convert numbers to scientific notation
+  labels <- gsub("0e\\+?0", "0", labels)         # Replace "0e0" or "0e+0" with "0"
+  labels <- gsub("e\\+?", " %*% 10^", labels)    # Format other numbers correctly
+  parse(text = labels)
+}
+
 # Plot for Cyanobacteria
 plot2<-ggplot(data=cyano_long, aes(x = date_for_plot, y=Value)) +
   geom_line(aes(linetype=Type,colour=Type),linewidth=0.75) +  # Primary Y-axis: Phytoplankton
-  scale_y_continuous(
-    name = "Cyanobacteria Biovolume (µm^3 per ml)",
-    sec.axis = sec_axis(~ ./scale_factor_cyano, name = "Daphnia Density (individuals/L)")  # No transformation, keeps original values
+  scale_y_continuous(label=scientific_10,
+    sec.axis = sec_axis(~ ./scale_factor_cyano, name = bquote("Daphnia Density ("~individuals~L^-1*")"))  # No transformation, keeps original values
   ) +
   labs(x = "Year", title="Cyanobacteria") +
   theme_classic(base_size=13)+
-  theme(legend.position="bottom")+
+  theme(legend.position="bottom", axis.title.y.left = element_blank())+
   scale_colour_manual(values = c("Cyanobacteria" = "#984EA3",  # Green from Set1
                                 "Daphnia" = "#999999")) 
 
