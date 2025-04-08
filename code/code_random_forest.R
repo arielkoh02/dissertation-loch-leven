@@ -10,6 +10,7 @@ library(caret)
 library(tidyverse)
 
 #load data 
+set.seed(14112002) # set seed here for reproducibility - M
 
 alldata<-read.csv("data/csv/alldata-2004-2016v2.csv")
 alldata<-alldata %>% filter(!is.na(Total.Biovolume)) %>% 
@@ -93,4 +94,7 @@ r21 <- cor(predictions1, testData$Total.Biovolume)^2
 
 # Print results
 cat("R²:", r21, "\nRMSE:", rmse1)
+# R²: 0.9255303 
+# RMSE: 2383295
+#
 
