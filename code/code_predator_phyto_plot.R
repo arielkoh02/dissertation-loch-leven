@@ -220,3 +220,29 @@ plot5
 
 
 ggsave("output/seasonaltimeseries2004-2016/1to1plot.png",plot5,width=16,height=10,dpi=450)
+
+
+# Tidy Spearman correlation with Daphnia
+correlations <- predator.phyto.data %>%
+  select(Daphnia, Cryto.Biovolume, Cyano.Biovolume, Diatoms.Biovolume, Greens.Biovolume) %>%
+  pivot_longer(cols = -Daphnia, names_to = "Biovolume_Group", values_to = "Biovolume") %>%
+  drop_na() %>%  # Remove any rows with NA values
+  group_by(Biovolume_Group) %>%
+  summarise(spearman_rho = cor(Daphnia, Biovolume, method = "spearman")) %>%
+  arrange(desc(spearman_rho))
+
+print(correlations)
+View(correlations)
+
+correlations <- predator.phyto.data %>%
+  select(Daphnia, Cryto.Biovolume, Cyano.Biovolume, Diatoms.Biovolume, Greens.Biovolume) %>%
+  pivot_longer(cols = -Daphnia, names_to = "Biovolume_Group", values_to = "Biovolume") %>%
+  drop_na() %>%  # Remove any rows with NA values
+  group_by(Biovolume_Group) %>%
+  summarise(
+    spearman_rho = cor(Daphnia, Biovolume, method = "spearman"),
+    p_value = cor.test(Daphnia, Biovolume, method = "spearman")$p.value
+  ) %>%
+  arrange(desc(spearman_rho))
+
+print(correlations)

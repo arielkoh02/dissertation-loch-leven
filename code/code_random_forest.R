@@ -11,57 +11,55 @@ library(tidyverse)
 
 #load data 
 
+set.seed(888)
+
 alldata<-read.csv("data/csv/alldata-2004-2016v2.csv")
 alldata<-alldata %>% filter(!is.na(Total.Biovolume)) %>% 
-  select(-YearMonth,-X,-Month) %>% 
-  mutate(Year=as.numeric(Year),Season=as.factor(Season))
+  select(-YearMonth,-X,-Month,-Cryto.Biovolume,-Cyano.Biovolume,-Diatoms.Biovolume,-Greens.Biovolume,-RB5.ChlA) %>% 
+  mutate(Year=as.numeric(Year),Season=as.factor(Season)) 
 View(alldata)
 summary(alldata)  
 colSums(is.na(alldata)) 
 str(alldata)
 
+
+#with imputed data
 data_impute<-rfImpute(Total.Biovolume~.,data=alldata,ntree=500)
 View(data_impute)
 
-
-# simplest random forest regression - without training 
-rf <-randomForest(Total.Biovolume~.,data=data_impute, ntree=500) 
-print(rf)
-
-
 #dividing data into training and testing data
-trainIndex <- createDataPartition(data_impute$Total.Biovolume, p = 0.7, list = FALSE)
-trainData <- data_impute[trainIndex, ]  # 70% training data
-testData <- data_impute[-trainIndex, ]  # 30% testing data
+trainIndex1 <- createDataPartition(data_impute$Total.Biovolume, p = 0.7, list = FALSE)
+trainData1 <- data_impute[trainIndex1, ]  # 70% training data
+testData1 <- data_impute[-trainIndex1, ]  # 30% testing data
 
-rf_model <- randomForest(
+rfmodel1 <- randomForest(
   Total.Biovolume ~ .,  # Formula: Predict Biovolume using all other variables
-  data = trainData,  
+  data = trainData1,  
   ntree = 500,  # Number of trees (default is 500)
-  mtry = sqrt(ncol(trainData) - 1),  # Number of features randomly selected at each split
+  mtry = sqrt(ncol(trainData1) - 1),  # Number of features randomly selected at each split
   importance = TRUE  # Compute variable importance
 )
 
-print(rf_model)
-importance(rf_model)  # Importance scores
-varImpPlot(rf_model)  # Plot variable importance
-plot(rf_model)
+print(rfmodel1)
+rfmodel1$importance # Importance scores
+varImpPlot(rfmodel1)  # Plot variable importance
+plot(rfmodel1)
 
-predictions <- predict(rf_model, testData)
+predictions <- predict(rfmodel1, testData1)
 
 # Compute RMSE (Root Mean Squared Error)
-rmse <- sqrt(mean((predictions - testData$Total.Biovolume)^2))
+rmse <- sqrt(mean((predictions - testData1$Total.Biovolume)^2))
 
 # Compute R²
-r2 <- cor(predictions, testData$Total.Biovolume)^2
+pearsonscorrcoef1 <- cor(predictions, testData1$Total.Biovolume)^2
 
 # Print results
-cat("R²:", r2, "\nRMSE:", rmse)
+cat("Pearson's Correlation Coefficient:", pearsonscorrcoef1, "\nRMSE:", rmse)
 
 # tuning model
 tuned_model <- tuneRF(
-  trainData[, -which(names(trainData) == "Total.Biovolume")],  # Predictors
-  trainData$Total.Biovolume,  # Response variable
+  trainData1[, -which(names(trainData1) == "Total.Biovolume")],  # Predictors
+  trainData1$Total.Biovolume,  # Response variable
   stepFactor = 1.5,  # Search range multiplier
   improve = 0.01,  # Minimum improvement needed
   ntreeTry = 500,  # Number of trees tested
@@ -69,28 +67,139 @@ tuned_model <- tuneRF(
 )
 
 #updated/tuned model
-rf_model1 <- randomForest(
+rfmodel1opt <- randomForest(
   Total.Biovolume ~ .,  # Formula: Predict Biovolume using all other variables
-  data = trainData,  
+  data = trainData1,  
   ntree = 500,  # Number of trees (default is 500)
-  mtry = 17,  # Number of features randomly selected at each split
+  mtry = 6,  # Number of features randomly selected at each split
   importance = TRUE  # Compute variable importance
 )
 
 # Plot OOB error vs. number of trees
-print(rf_model1)
-importance(rf_model1)  # Importance scores
-varImpPlot(rf_model1)  # Plot variable importance
-plot(rf_model1)
+print(rfmodel1opt)
+rfmodel1opt$importance # Importance scores
+varImpPlot(rfmodel1opt)  # Plot variable importance
+plot(rfmodel1opt)
 
-predictions1 <- predict(rf_model1, testData)
+predictions1opt <- predict(rfmodel1opt, testData1)
 
 # Compute RMSE (Root Mean Squared Error)
-rmse1 <- sqrt(mean((predictions1 - testData$Total.Biovolume)^2))
+rmse1opt <- sqrt(mean((predictions1opt - testData1$Total.Biovolume)^2))
 
 # Compute R²
-r21 <- cor(predictions1, testData$Total.Biovolume)^2
+pearsonscorrcoef1opt <- cor(predictions1opt, testData1$Total.Biovolume)^2
 
 # Print results
-cat("R²:", r21, "\nRMSE:", rmse1)
+cat("Pearson's Correlation Coefficient:", pearsonscorrcoef1opt, "\nRMSE:", rmse1opt)
 
+# Extract importance values for rfmodel1opt
+imp1 <- importance(rfmodel1opt, type = 1)  # type = 1 for %IncMSE
+imp1_df <- as.data.frame(imp1)
+imp1_df$vars <- rownames(imp1_df)
+
+# Sort by importance
+imp1_df <- imp1_df[order(imp1_df$`%IncMSE`), ]
+
+# Plot dotchart
+dotchart(
+  imp1_df$`%IncMSE`, 
+  labels = imp1_df$vars,
+  xlim = c(0, max(imp1_df$`%IncMSE`, na.rm = TRUE) * 1.1),
+  pch = 1,
+  xlab = "% Increase in MSE", 
+  ylab="Predictors"
+)
+
+
+#set.seed for NA data 
+set.seed(40)
+
+#removing NAs
+View(alldata)
+
+noNAdata<-alldata %>% drop_na() 
+
+View(noNAdata)
+
+#dividing data into training and testing data
+trainIndex2 <- createDataPartition(noNAdata$Total.Biovolume, p = 0.7, list = FALSE)
+trainData2 <- noNAdata[trainIndex2, ]  # 70% training data
+testData2 <- noNAdata[-trainIndex2, ]  # 30% testing data
+
+rfmodel2 <- randomForest(
+  Total.Biovolume ~ .,  # Formula: Predict Biovolume using all other variables
+  data = trainData2,  
+  ntree = 500,  # Number of trees (default is 500)
+  mtry = sqrt(ncol(trainData2) - 1),  # Number of features randomly selected at each split
+  importance = TRUE  # Compute variable importance
+)
+
+print(rfmodel2)
+importance(rfmodel2)  # Importance scores
+varImpPlot(rfmodel2)  # Plot variable importance
+plot(rfmodel2)
+
+predictions2 <- predict(rfmodel2, testData2)
+
+# Compute RMSE (Root Mean Squared Error)
+rmse2 <- sqrt(mean((predictions2 - testData2$Total.Biovolume)^2))
+
+# Compute R²
+pearsonscorrcoef2 <- cor(predictions2, testData2$Total.Biovolume)^2
+
+# Print results
+cat("R²:", pearsonscorrcoef2, "\nRMSE:", rmse2)
+
+# tuning model
+tuned_model2 <- tuneRF(
+  trainData2[, -which(names(trainData2) == "Total.Biovolume")],  # Predictors
+  trainData2$Total.Biovolume,  # Response variable
+  stepFactor = 1.5,  # Search range multiplier
+  improve = 0.01,  # Minimum improvement needed
+  ntreeTry = 500,  # Number of trees tested
+  trace = TRUE  # Show progress
+)
+
+#updated/tuned model
+rfmodel2opt <- randomForest(
+  Total.Biovolume ~ .,  # Formula: Predict Biovolume using all other variables
+  data = trainData2,  
+  ntree = 500,  # Number of trees (default is 500)
+  mtry = 4,  # Number of features randomly selected at each split
+  importance = TRUE  # Compute variable importance
+)
+
+# Plot OOB error vs. number of trees
+print(rfmodel2opt)
+importance(rfmodel2opt)  # Importance scores
+varImpPlot(rfmodel2opt)  # Plot variable importance
+plot(rfmodel2opt)
+
+predictions2opt <- predict(rfmodel2, testData2)
+
+# Compute RMSE (Root Mean Squared Error)
+rmse2opt <- sqrt(mean((predictions2opt - testData2$Total.Biovolume)^2))
+
+# Compute R²
+pearsonscorrcoef2opt <- cor(predictions2opt, testData2$Total.Biovolume)^2
+
+# Print results
+cat("Pearsons Correlation Coefficient:", pearsonscorrcoef2opt, "\nRMSE:", rmse2opt)
+
+# Extract importance values
+imp <- importance(rfmodel2opt, type = 1)  # type = 1 gives %IncMSE
+imp_df <- as.data.frame(imp)
+imp_df$vars <- rownames(imp_df)
+
+# Sort variables by importance
+imp_df <- imp_df[order(imp_df$`%IncMSE`), ]  # or use MeanDecreaseAccuracy if your column is named that
+
+# Plot with dotchart
+dotchart(
+  imp_df$`%IncMSE`, 
+  labels = imp_df$vars,
+  xlim = c(-2, max(imp_df$`%IncMSE`, na.rm = TRUE) * 1.1),
+  pch = 1,
+  xlab = "% Increase in MSE", 
+  ylab="Predictors"
+)
