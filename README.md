@@ -4,11 +4,11 @@ This repository contains the R project for my dissertation, focusing on the ecol
 
 ## Project Structure
 
-- **admin/**: Administrative documents and resources.
-- **code/**: R scripts for data processing and analysis.
-- **data/**: Raw and processed datasets.
-- **notes/**: Research notes and references.
-- **output/**: Generated figures, tables, and results.
+- [**admin/**](https://github.com/arielkoh02/dissertation-loch-leven/tree/main/admin): Administrative documents and resources.
+- [**code/**](https://github.com/arielkoh02/dissertation-loch-leven/tree/main/code): R scripts for data processing and analysis.
+- [**data/**](https://github.com/arielkoh02/dissertation-loch-leven/tree/main/data): Raw and processed datasets.
+- [**notes/**](https://github.com/arielkoh02/dissertation-loch-leven/tree/main/notes): Research notes and references.
+- [**output/**](https://github.com/arielkoh02/dissertation-loch-leven/tree/main/output): Generated figures, tables, and results.
 
 ## Getting Started
 
