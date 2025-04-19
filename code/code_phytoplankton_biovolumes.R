@@ -147,6 +147,8 @@ phyto_seasonal_average <- phyto_seasonal_average %>%
 
 View(phyto_seasonal_average)
 
+write.csv(phyto_seasonal_average, "data/csv/phyto_seasonal_average.csv")
+
 #plot seasonal cryto biovol
 plot_seasonalcryto <- ggplot(phyto_seasonal_average, aes(x = date_for_plot, y = Cryto.Biovolume)) +
   geom_line(size = 0.5) +  # Line color for each Phytoplankton Group

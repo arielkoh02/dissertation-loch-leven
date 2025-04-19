@@ -4,6 +4,9 @@
 #install.packages("RColorBrewer")
 library(RColorBrewer)
 
+phyto_seasonal_average<-read.csv("data/csv/phyto_seasonal_average.csv")
+seasonal_predator<-read.csv("data/csv/seasonal_predator.csv")
+
 predator.phyto.data <- full_join(
   select(phyto_seasonal_average,
          season_year,
@@ -19,13 +22,11 @@ predator.phyto.data <- full_join(
          date_for_plot),  
   by = "date_for_plot")
 
+predator.phyto.data$date_for_plot <- as.Date(predator.phyto.data$date_for_plot)
+
 View(predator.phyto.data)
 
-min_value <- 0.001
-max_value <- max(c(cryto_long$Value, cyano_long$Value, diatoms_long$Value, greens_long$Value), na.rm = TRUE)
 
-min_value
-max_value
 # Normalize Daphnia so it fits on the same scale as biovolume
 predator.phyto.data <- predator.phyto.data %>%
   mutate(Daphnia_scaled_cryto = Daphnia / max(Daphnia, na.rm = TRUE) * max(Cryto.Biovolume, na.rm = TRUE))
@@ -36,28 +37,28 @@ scale_factor_cryto <- max_cryto / max_daphnia
 
 cryto_daphnia_data<-predator.phyto.data %>% 
   select(date_for_plot,Cryto.Biovolume, Daphnia_scaled_cryto) %>% 
-  rename(Crytomonads="Cryto.Biovolume",Daphnia="Daphnia_scaled_cryto")  
+  rename(Cryptophyceae="Cryto.Biovolume",Daphnia="Daphnia_scaled_cryto")  
 View(cryto_daphnia_data)
 
 cryto_long<-cryto_daphnia_data %>% 
-  pivot_longer(cols = c("Crytomonads","Daphnia"),  # Select biovolume columns
+  pivot_longer(cols = c("Cryptophyceae","Daphnia"),  # Select biovolume columns
                             names_to = "Type",  # Create new column for names
                             values_to = "Value")
   
 
 View(cryto_long)
 
-# Plot for Cryptophytes 
+# Plot for Cryptophyceae 
 plot1<-ggplot(data=cryto_long, aes(x = date_for_plot, y=Value)) +
   geom_line(aes(linetype=Type,colour=Type),linewidth=0.75) +  # Primary Y-axis: Phytoplankton
   scale_y_continuous(
     name = bquote("Biovolume ("~mu*m^3~ml^-1*")"),
     sec.axis = sec_axis(~ ./scale_factor_cryto)  # No transformation, keeps original values
   ) +
-  labs(x = "Year", title="Crytomonads") +
+  labs(x = "Year", title="Cryptophyceae") +
   theme_classic(base_size=17)+
   theme(legend.position="bottom", plot.title = element_text(hjust = 0.5) )+
-  scale_colour_manual(values = c("Crytomonads" = "#377EB8",  # Green from Set1
+  scale_colour_manual(values = c("Cryptophyceae" = "#377EB8",  # Green from Set1
                                  "Daphnia" = "#999999")) 
 
 plot1

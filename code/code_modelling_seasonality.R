@@ -85,7 +85,7 @@ plot_violin <- ggplot(alldatalong, aes(x = Season, y = Biovolume, fill = Season)
   }, geom = "errorbar", width = 0.1, linetype = "dashed", color = "black") +
   facet_wrap(~Phytoplankton_Group, scales = "fixed", 
              labeller = labeller(Phytoplankton_Group = c(
-               "Cryto.Biovolume" = "Crytomonads",
+               "Cryto.Biovolume" = "Cryptophyceae",
                "Cyano.Biovolume"="Cyanobacteria",
                "Diatoms.Biovolume" = "Diatoms",
                "Greens.Biovolume"="Green Algae"

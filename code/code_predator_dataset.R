@@ -54,6 +54,8 @@ seasonal_predator<- seasonal_predator %>%
 
 View(seasonal_predator)
 
+write.csv(seasonal_predator, "data/csv/seasonal_predator.csv")
+
 #plotting seasonal trend
 plot_seasonalpredator<-ggplot(seasonal_predator, aes(x = date_for_plot, y = `Daphnia`)) +
   geom_line(linewidth= 0.5, colour='grey') +  # Line plot for trends

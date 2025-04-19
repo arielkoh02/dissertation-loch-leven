@@ -190,6 +190,16 @@ cat("Pearsons Correlation Coefficient:", pearsonscorrcoef2opt, "\nRMSE:", rmse2o
 imp <- importance(rfmodel2opt, type = 1)  # type = 1 gives %IncMSE
 imp_df <- as.data.frame(imp)
 imp_df$vars <- rownames(imp_df)
+imp_df$vars <- recode(imp_df$vars,
+                      "RB5.SRP" = "SRP",
+                      "RB5.NO3" = "Nitrate",
+                      "RB5.SRSi" = "SRSi",
+                      "RB5.Temp" = "Temperature",
+                      "waterlevel.masl"="Water Level",
+                      "RB5.DO"="DO",
+                      "RB5.pH"="pH",
+                      "RB5.TP"="TP",
+                      "RB5.SD"="Secchi Depth")
 
 # Sort variables by importance
 imp_df <- imp_df[order(imp_df$`%IncMSE`), ]  # or use MeanDecreaseAccuracy if your column is named that
