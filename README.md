@@ -11,7 +11,7 @@ This repository contains the R project for my dissertation, focusing on the ecol
 - [**output/**](https://github.com/arielkoh02/dissertation-loch-leven/tree/main/output): Generated figures, tables, and results.
 
 ### Links to Important Code
-[**Combining Datasets & Cleaning/**](https://arielkoh02.github.io/dissertation-loch-leven/complete-code.html)
+[**Combining Datasets & Cleaning**](https://arielkoh02.github.io/dissertation-loch-leven/complete-code.html)
 
 ## Getting Started
 
