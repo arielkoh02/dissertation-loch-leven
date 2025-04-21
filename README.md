@@ -17,7 +17,7 @@ This repository contains the R project for my dissertation, focusing on the ecol
 Ensure you have R and RStudio installed. Required packages include:
 
 ```R
-install.packages(c("tidyverse", "ggplot2", "dplyr", "readr"))
+install.packages("tidyverse")
 ```
 
 ### Running the Project
