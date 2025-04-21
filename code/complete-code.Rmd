@@ -33,7 +33,7 @@ biovol_fulldata <- read.csv("../data/csv/biovolfulldata_2004-2016.csv") %>%
   mutate(YearMonth = as.Date(YearMonth))
 ```
 
-### 3. Predator (Daphnia) Data
+### 3. Predator <em>(Daphnia)</em> Data
 Selects and processes zooplankton data, aggregates monthly means, and filters for the target timeframe.
 ```{r}
 predator_data <- read.csv("../data/csv/crustaceanzooplankton_1980-2023.csv") %>%
