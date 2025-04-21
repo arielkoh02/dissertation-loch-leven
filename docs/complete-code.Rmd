@@ -1,5 +1,5 @@
 ---
-title: "Data Integration Report: RB5 & Biovolume Dataset"
+title: "Combining Datasets & Cleaning"
 author: "Ariel Koh"
 date: "21/04/2025"
 output: html_document
@@ -10,9 +10,6 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(lubridate)
 ```
-
-## Overview
-This document compiles and cleans several datasets related to RB5 monitoring, biovolume measurements, predator densities, water levels, temperature, pH, and dissolved oxygen (DO) levels for the period 2004–2016. The goal is to merge all data into a unified format suitable for analysis.
 
 ## Load and Clean Datasets
 
@@ -28,14 +25,14 @@ RB5_monitoring_data <- RB5_monitoring_data %>%
 
 ### 2. Biovolume Data
 Processes monthly biovolume values and standardizes date format.
-```{r}
+```{r, warning = FALSE, message = FALSE}
 biovol_fulldata <- read.csv("../data/csv/biovolfulldata_2004-2016.csv") %>%
   mutate(YearMonth = as.Date(YearMonth))
 ```
 
 ### 3. Predator <em>(Daphnia)</em> Data
 Selects and processes zooplankton data, aggregates monthly means, and filters for the target timeframe.
-```{r}
+```{r, warning = FALSE, message = FALSE}
 predator_data <- read.csv("../data/csv/crustaceanzooplankton_1980-2023.csv") %>%
   select(Date, Daphnia.hyalina.ind.L) %>%
   mutate(Date = dmy(Date), year = year(Date), month = month(Date)) %>%
@@ -50,7 +47,7 @@ predator_data <- read.csv("../data/csv/crustaceanzooplankton_1980-2023.csv") %>%
 
 ### 4. Water Level Data
 Combines two water level datasets and computes monthly means.
-```{r}
+```{r, warning = FALSE, message = FALSE}
 waterlevelp2 <- read.csv("../data/csv/waterlevels_1993-2007.csv") %>%
   rename(waterlevel.masl = Harbour.masl) %>%
   mutate(Date = dmy(Date)) %>%
@@ -71,7 +68,7 @@ fullwaterlevel <- bind_rows(waterlevelp2, waterlevelp3) %>%
 
 ### 5. Temperature and SD Data
 Processes temperature and standard deviation data, summarising to monthly means.
-```{r}
+```{r, warning = FALSE, message = FALSE}
 tempsddata <- read.csv("../data/csv/Temp_SD_2004-2016.csv") %>%
   mutate(Date = dmy(Date), RB5.SD = as.numeric(RB5.SD), RB5.Temp = as.numeric(RB5.Temp),
          year = year(Date), month = month(Date)) %>%
@@ -82,7 +79,7 @@ tempsddata <- read.csv("../data/csv/Temp_SD_2004-2016.csv") %>%
 
 ### 6. pH Data (2010–2016)
 Processes pH values, available only for 2010–2016, into monthly means.
-```{r}
+```{r, warning = FALSE, message = FALSE}
 pHdata <- read.csv("../data/csv/pH_2010-2016.csv") %>%
   select(Date, Value) %>%
   mutate(Date = dmy(Date), RB5.pH = Value,
@@ -94,7 +91,7 @@ pHdata <- read.csv("../data/csv/pH_2010-2016.csv") %>%
 
 ### 7. DO Data (2010–2016)
 Filters and processes dissolved oxygen (% saturation) into monthly averages.
-```{r}
+```{r, warning = FALSE, message = FALSE}
 DOdata <- read.csv("../data/csv/DO_2010-2016.csv") %>%
   filter(Units == "%") %>%
   select(Date, Value) %>%
@@ -107,7 +104,7 @@ DOdata <- read.csv("../data/csv/DO_2010-2016.csv") %>%
 
 ## Merge All Data
 This step incrementally merges all cleaned datasets into one by matching on the `YearMonth` column.
-```{r}
+```{r, warning = FALSE, message = FALSE}
 all_data1 <- full_join(RB5_monitoring_data, select(predator_data, YearMonth, Daphnia), by = "YearMonth")
 all_data2 <- full_join(biovol_fulldata, select(fullwaterlevel, YearMonth, waterlevel.masl), by = "YearMonth")
 all_data <- full_join(all_data2, all_data1, by = "YearMonth")
@@ -127,7 +124,7 @@ all_data <- all_data %>%
 
 ## Final Cleaning
 Refines merged dataset by selecting relevant columns, deriving seasonal categories, and calculating total biovolume.
-```{r}
+```{r, warning = FALSE, message = FALSE}
 all_data <- all_data %>%
   distinct(YearMonth, .keep_all = TRUE) %>%
   select(YearMonth, year.y, month.y, Cryto.Biovolume, Cyano.Biovolume,
@@ -148,10 +145,6 @@ all_data <- all_data %>%
 
 ## Save Final Dataset
 Exports the cleaned and merged dataset as CSV files for further analysis.
-```{r}
-write.csv(all_data, "../data/csv/alldata-2004-2016.csv", row.names = FALSE)
+```{r, warning = FALSE, message = FALSE}
 write.csv(all_data, "../data/csv/alldata-2004-2016v2.csv", row.names = FALSE)
 ```
-
-## Conclusion
-All datasets have been merged and cleaned into a consistent structure for further analysis. The final dataset contains monthly observations from 2004 to 2016, with environmental, biological, and chemical measurements aligned by date.
