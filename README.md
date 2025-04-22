@@ -12,6 +12,7 @@ This repository contains the R project for my dissertation, focusing on the ecol
 
 ### Links to Important Code
 [**Combining Datasets & Cleaning**](https://arielkoh02.github.io/dissertation-loch-leven/complete-code.html)
+[**Random Forest Regression**](https://arielkoh02.github.io/dissertation-loch-leven/random-forest.html)
 
 ## Getting Started
 
