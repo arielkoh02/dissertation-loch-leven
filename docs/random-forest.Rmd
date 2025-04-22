@@ -1,0 +1,142 @@
+---
+title: "Random Forest Regression for Predicting Total Biovolume"
+author: "Ariel Koh"
+date: "22/04/2025"
+output:
+  word_document:
+    toc: true
+    toc_depth: 2
+  html_document:
+    toc: true
+    toc_depth: 2
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(caret)
+library(randomForest)
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+set.seed(888)
+```
+
+## Load and Prepare Data
+
+```{r load-data}
+alldata <- read.csv("../data/csv/alldata-2004-2016v2.csv") %>%
+  filter(!is.na(Total.Biovolume)) %>%
+  select(-YearMonth, -Month, -Cryto.Biovolume, -Cyano.Biovolume, -Diatoms.Biovolume, -Greens.Biovolume, -RB5.ChlA) %>%
+  mutate(Year = as.numeric(Year), Season = as.factor(Season))
+summary(alldata)
+```
+
+## Random Forest with Imputed Data
+
+### Impute Missing Values
+```{r impute}
+data_impute <- rfImpute(Total.Biovolume ~ ., data = alldata, ntree = 500)
+```
+
+### Train-Test Split
+```{r split1}
+trainIndex1 <- createDataPartition(data_impute$Total.Biovolume, p = 0.7, list = FALSE)
+trainData1 <- data_impute[trainIndex1, ]
+testData1 <- data_impute[-trainIndex1, ]
+```
+
+### Fit Random Forest
+```{r rf1}
+rfmodel1 <- randomForest(Total.Biovolume ~ ., data = trainData1, ntree = 500, mtry = sqrt(ncol(trainData1)-1), importance = TRUE)
+print(rfmodel1)
+rfmodel1$importance
+varImpPlot(rfmodel1)
+```
+
+### Evaluate Model
+```{r eval1}
+predictions <- predict(rfmodel1, testData1)
+rmse <- sqrt(mean((predictions - testData1$Total.Biovolume)^2))
+rsq <- cor(predictions, testData1$Total.Biovolume)^2
+cat("R²:", rsq, "\nRMSE:", rmse)
+```
+
+## Tune Model Hyperparameters
+
+```{r tune1}
+tuned_model <- tuneRF(trainData1[, -which(names(trainData1) == "Total.Biovolume")], trainData1$Total.Biovolume, stepFactor = 1.5, improve = 0.01, ntreeTry = 500, trace = TRUE)
+```
+
+### Final Tuned Model
+```{r rf1opt}
+rfmodel1opt <- randomForest(Total.Biovolume ~ ., data = trainData1, ntree = 500, mtry = 6, importance = TRUE)
+print(rfmodel1opt)
+rfmodel1opt$importance
+predictions1opt <- predict(rfmodel1opt, testData1)
+rmse1opt <- sqrt(mean((predictions1opt - testData1$Total.Biovolume)^2))
+rsq1opt <- cor(predictions1opt, testData1$Total.Biovolume)^2
+cat("R²:", rsq1opt, "\nRMSE:", rmse1opt)
+varImpPlot(rfmodel1opt)
+```
+
+## Random Forest on Complete Cases Only
+
+```{r no-na}
+set.seed(40)
+noNAdata <- alldata %>% drop_na()
+```
+
+### Train-Test Split
+```{r split2}
+trainIndex2 <- createDataPartition(noNAdata$Total.Biovolume, p = 0.7, list = FALSE)
+trainData2 <- noNAdata[trainIndex2, ]
+testData2 <- noNAdata[-trainIndex2, ]
+```
+
+### Fit Model
+```{r rf2}
+rfmodel2 <- randomForest(Total.Biovolume ~ ., data = trainData2, ntree = 500, mtry = sqrt(ncol(trainData2)-1), importance = TRUE)
+print(rfmodel2)
+rfmodel2$importance
+predictions2 <- predict(rfmodel2, testData2)
+rmse2 <- sqrt(mean((predictions2 - testData2$Total.Biovolume)^2))
+rsq2 <- cor(predictions2, testData2$Total.Biovolume)^2
+cat("R²:", rsq2, "\nRMSE:", rmse2)
+varImpPlot(rfmodel2)
+```
+
+### Tune Final Model
+```{r tune2}
+tuned_model2 <- tuneRF(trainData2[, -which(names(trainData2) == "Total.Biovolume")], trainData2$Total.Biovolume, stepFactor = 1.5, improve = 0.01, ntreeTry = 500, trace = TRUE)
+```
+
+```{r rf2opt}
+rfmodel2opt <- randomForest(Total.Biovolume ~ ., data = trainData2, ntree = 500, mtry = 4, importance = TRUE)
+print(rfmodel2opt)
+rfmodel2opt$importance
+predictions2opt <- predict(rfmodel2opt, testData2)
+rmse2opt <- sqrt(mean((predictions2opt - testData2$Total.Biovolume)^2))
+rsq2opt <- cor(predictions2opt, testData2$Total.Biovolume)^2
+cat("R²:", rsq2opt, "\nRMSE:", rmse2opt)
+```
+
+### Variable Importance Plot (Renamed)
+```{r importance-plot}
+imp_df <- as.data.frame(importance(rfmodel2opt, type = 1))
+imp_df$vars <- rownames(imp_df)
+imp_df$vars <- recode(imp_df$vars,
+                      "RB5.SRP" = "SRP",
+                      "RB5.NO3" = "Nitrate",
+                      "RB5.SRSi" = "SRSi",
+                      "RB5.Temp" = "Temperature",
+                      "waterlevel.masl" = "Water Level",
+                      "RB5.DO" = "DO",
+                      "RB5.pH" = "pH",
+                      "RB5.TP" = "TP",
+                      "RB5.SD" = "Secchi Depth")
+imp_df <- imp_df[order(imp_df$`%IncMSE`), ]
+dotchart(imp_df$`%IncMSE`, labels = imp_df$vars, xlim = c(-2, max(imp_df$`%IncMSE`, na.rm = TRUE) * 1.1),
+         pch = 1, xlab = "% Increase in MSE", ylab = "Predictors")
+```
+
+## Conclusion
+This analysis used random forest regression to identify key environmental predictors of total phytoplankton biovolume. Both imputed and complete-case approaches yielded consistent variable importance rankings, offering confidence in the robustness of the model outputs.
+
