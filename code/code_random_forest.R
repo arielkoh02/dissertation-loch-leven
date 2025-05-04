@@ -15,7 +15,7 @@ set.seed(888)
 
 alldata<-read.csv("data/csv/alldata-2004-2016v2.csv")
 alldata<-alldata %>% filter(!is.na(Total.Biovolume)) %>% 
-  select(-YearMonth,-X,-Month,-Cryto.Biovolume,-Cyano.Biovolume,-Diatoms.Biovolume,-Greens.Biovolume,-RB5.ChlA) %>% 
+  select(-YearMonth,-Month,-Cryto.Biovolume,-Cyano.Biovolume,-Diatoms.Biovolume,-Greens.Biovolume,-RB5.ChlA) %>% 
   mutate(Year=as.numeric(Year),Season=as.factor(Season)) 
 View(alldata)
 summary(alldata)  
@@ -203,6 +203,7 @@ imp_df$vars <- recode(imp_df$vars,
 
 # Sort variables by importance
 imp_df <- imp_df[order(imp_df$`%IncMSE`), ]  # or use MeanDecreaseAccuracy if your column is named that
+View(imp_df)
 
 # Plot with dotchart
 dotchart(
@@ -212,4 +213,20 @@ dotchart(
   pch = 1,
   xlab = "% Increase in MSE", 
   ylab="Predictors"
+)
+
+importance(rfmodel1opt, type = 1)
+importance(rfmodel2opt, type = 1)
+
+#dot chart with top 3 predictors
+imp_df_top3 <- head(imp_df, 3)
+View(imp_df_top3)
+dotchart(
+  imp_df_top3$`%IncMSE`, 
+  labels = imp_df_top3$vars,
+  xlim = c(0, max(imp_df_top3$`%IncMSE`, na.rm = TRUE) * 1.1),
+  pch = 1,
+  xlab = "% Increase in MSE",
+  ylab="Predictors",
+  main = "Top 3 Predictors (Random Forest)"
 )

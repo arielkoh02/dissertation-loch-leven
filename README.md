@@ -1,18 +1,15 @@
 # dissertation-loch-leven
 
-This repository contains the R project for my dissertation, focusing on the ecological and environmental analysis of Loch Leven. It includes data processing, statistical analysis, and visualization scripts.
+This repository contains the R project for my dissertation, focusing on Investigating the seasonality and environmental drivers of phytoplankton blooms in Loch Leven. It includes data processing, statistical analysis, and visualization scripts.
 
 ## Project Structure
 
 - [**admin/**](https://github.com/arielkoh02/dissertation-loch-leven/tree/main/admin): Administrative documents and resources.
 - [**code/**](https://github.com/arielkoh02/dissertation-loch-leven/tree/main/code): R scripts for data processing and analysis.
 - [**data/**](https://github.com/arielkoh02/dissertation-loch-leven/tree/main/data): Raw and processed datasets.
+- [**docs/**](https://github.com/arielkoh02/dissertation-loch-leven/tree/main/docs): Rmd scripts and word document outputs.
 - [**notes/**](https://github.com/arielkoh02/dissertation-loch-leven/tree/main/notes): Research notes and references.
 - [**output/**](https://github.com/arielkoh02/dissertation-loch-leven/tree/main/output): Generated figures, tables, and results.
-
-### Links to Important Code
-[**Combining Datasets & Cleaning**](https://arielkoh02.github.io/dissertation-loch-leven/complete-code.html)\
-[**Random Forest Regression**](https://arielkoh02.github.io/dissertation-loch-leven/random-forest.html)
 
 ## Getting Started
 
