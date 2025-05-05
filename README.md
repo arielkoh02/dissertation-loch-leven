@@ -7,7 +7,8 @@ This repository contains the R project for my dissertation, focusing on Investig
 - [**admin/**](https://github.com/arielkoh02/dissertation-loch-leven/tree/main/admin): Administrative documents and resources.
 - [**code/**](https://github.com/arielkoh02/dissertation-loch-leven/tree/main/code): R scripts for data processing and analysis.
 - [**data/**](https://github.com/arielkoh02/dissertation-loch-leven/tree/main/data): Raw and processed datasets.
-- [**docs/**](https://github.com/arielkoh02/dissertation-loch-leven/tree/main/docs): Rmd scripts and word document outputs.
+- [**dissertation/**](https://github.com/arielkoh02/dissertation-loch-leven/tree/main/dissertation): Final dissertation report in Word and PDF.
+- [**docs/**](https://github.com/arielkoh02/dissertation-loch-leven/tree/main/docs): Rmd scripts and Word document outputs.
 - [**notes/**](https://github.com/arielkoh02/dissertation-loch-leven/tree/main/notes): Research notes and references.
 - [**output/**](https://github.com/arielkoh02/dissertation-loch-leven/tree/main/output): Generated figures, tables, and results.
 
